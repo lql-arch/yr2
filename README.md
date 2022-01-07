@@ -1,0 +1,1 @@
+This a standby warehouse.
