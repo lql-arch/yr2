@@ -9,7 +9,7 @@ void strbuf_malloc(strbuf *sb,size_t alloc);
 void strbuf_init(strbuf *sb, size_t alloc);	
 //初始化 sb 结构体，容量为 alloc。
 
-void strbuf_attach(strbuf *sb, void *str, size_t len, size_t alloc);	
+void strbuf_attach(strbuf *sb, void *str, size_t len, size_t mem);	
 //将字符串填充到 sb 中，长度为 len, 容量为 alloc。
 
 void strbuf_release(strbuf *sb);	
