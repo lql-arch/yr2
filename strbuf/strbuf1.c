@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<stdlib.h>
 #include"strbuf1.h"
 
 void strbuf_malloc(strbuf *sb,size_t alloc){
@@ -45,9 +46,11 @@ void strbuf_swap(strbuf *a, strbuf *b){
 
 char *strbuf_detach(strbuf *sb, size_t *sz)
 {
+    char *res=sb->buf;
     if (sz)
         *sz=sb->len;
-    return sb->buf;
+    strbuf_init(sb,0);
+    return res;
 }
 
 int strbuf_cmp(const strbuf *first, const strbuf *second){
