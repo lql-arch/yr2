@@ -4,10 +4,12 @@ typedef struct strbuf {
   char *buf;   //缓冲区（字符串）
 }strbuf;
 
-ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);	
+__ssize_t read_in_full(strbuf *sb,int fd,int len);
+
+__ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);	
 //为 sb 直接扩容 hint ? hint : 8192 大小， 然后将文件描述符为 fd 的所有文件内容读取到 sb 中。
 
-ssize_t strbuf_read_file(struct strbuf *sb, const char *path, size_t hint);	
+__ssize_t strbuf_read_file(struct strbuf *sb, const char *path, size_t hint);	
 //为 sb 直接扩容 hint ? hint : 8192 大小， 然后将路径为 path 的所有文件内容读取到 sb 中。
 
 int strbuf_getline(struct strbuf *sb, FILE *fp);	

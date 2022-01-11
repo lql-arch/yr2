@@ -35,13 +35,10 @@ void strbuf_release(strbuf *sb){
 }
 
 void strbuf_swap(strbuf *a, strbuf *b){
-    int len = a->len > b->len ? a->len : b->len ;
-    int alloc = a->alloc > b->alloc ? a->alloc:b->alloc;
     strbuf *c;
     c=a;
     a=b;
     b=c;
-    strbuf_reset(c);
 }
 
 char *strbuf_detach(strbuf *sb, size_t *sz)

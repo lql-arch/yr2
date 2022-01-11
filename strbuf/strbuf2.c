@@ -51,9 +51,7 @@ void strbuf_addbuf(strbuf *sb, const struct strbuf *sb2)
 static inline void strbuf_setlen(strbuf *sb, size_t len)
 {
     sb->len=0;
-    sb->alloc=0;
     strbuf_grow(sb,len);
-    sb->buf=(char*)realloc(sizeof(char) * sb->alloc + 1);
     sb->buf[sb->len]='\0';
 }
 
