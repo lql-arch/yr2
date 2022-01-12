@@ -50,8 +50,13 @@ void strbuf_addbuf(strbuf *sb, const struct strbuf *sb2)
 
 static inline void strbuf_setlen(strbuf *sb, size_t len)
 {
-    sb->len=0;
-    strbuf_grow(sb,len);
+    int alloc=sb->alloc ? sb->alloc :0;
+    if (len>alloc)
+    {
+        exit(EXIT_FAILURE);
+        fprintf(stderr,"error:len > alloc");
+    }
+    sb->len=len;
     sb->buf[sb->len]='\0';
 }
 

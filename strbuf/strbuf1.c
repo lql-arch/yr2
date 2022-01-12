@@ -2,6 +2,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include"strbuf1.h"
+#include"strbuf2.h"
 
 void strbuf_malloc(strbuf *sb,size_t alloc){
     sb->buf=(strbuf*)malloc(sizeof(char)*alloc+1);
@@ -61,10 +62,5 @@ int strbuf_cmp(const strbuf *first, const strbuf *second){
 }
 
 void strbuf_reset(strbuf *sb){
-    if (sb->alloc)
-    {
-        sb->len=0;
-        sb->alloc=0;
-        sb->buf=NULL;
-    }
+    strbuf_setlen(sb,0);
 }

@@ -4,7 +4,11 @@ typedef struct strbuf {
   char *buf;   //缓冲区（字符串）
 }strbuf;
 
-__ssize_t read_in_full(strbuf *sb,int fd,int len);
+__ssize_t _read_in_full(char *str,int len,int fd);
+
+__ssize_t read_in_full(strbuf *sb,int len,char* fd);
+
+int strbuf_getwholeline(strbuf *sb, FILE *fp, int end);
 
 __ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);	
 //为 sb 直接扩容 hint ? hint : 8192 大小， 然后将文件描述符为 fd 的所有文件内容读取到 sb 中。
