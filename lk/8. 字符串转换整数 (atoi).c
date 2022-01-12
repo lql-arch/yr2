@@ -1,11 +1,9 @@
 #include<limits.h>
-
 int myAtoi(char * s)
 {
-    int len =strlen(s);  //获取字符串长度
-    long  double num=0; //用long int或者long long都不够案例的最大值输入大
+    int len =strlen(s);
     int i=0;
-    int j;
+    long num=0;
     int flag=1;
     while(*s==' ') //去除前导空格 更新数组长度
     {
@@ -26,27 +24,45 @@ int myAtoi(char * s)
     }
 
     int *newnum =(int*)malloc(len * sizeof(int));
+    while(*s=='0')
+    {
+        s++;
+    }
     while(*s!='\0' ) //判断是否到字符串末尾
     {
-        newnum[i]=(int)*s-48;                 //求出每个数 '0'的AS码为48
-        if(newnum[i]>9 || newnum[i]<0)       //若遇到了不是数字 就跳出 代表结束
+        newnum[i]=(int)*s-48; 
+        if(newnum[i]>9 || newnum[i]<0) 
             break;
-
-        num = num*10 +newnum[i]; //记录新数字
         i++; 
         s++;
 	}
-    if(flag *num>=INT_MAX ) //判断是否大于2^31
+    if(i>10)
     {
-	    return INT_MAX;
+        if (flag==-1){
+            return INT_MIN;
+        }else{
+            return INT_MAX;
+        }
     }
-    if(flag *num <=INT_MIN )
+    for(int j=0;j<i;j++)
     {
-        return INT_MIN;
+        num=num*10+newnum[j];
     }
-    else 
-    {
-        return flag *num;
+    num=flag*num;
+    if(i==10){
+        if(flag==-1)
+        {
+            if(num<=INT_MIN)
+            {
+                return INT_MIN;
+            }
+        }else
+        {
+            if(num>=INT_MAX)
+            {
+                return INT_MAX;
+            }
+        }
     }
-	
+	return num;
 }
