@@ -7,7 +7,7 @@
 #include"strbuf2.h"
 #include"strbuf1.h"
 
-struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
+strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
 {
     int status=0;
     int j=0,k=0;
@@ -56,3 +56,12 @@ struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, in
     return s;
 }
 
+int strbuf_start(strbuf* sb,const char*str)
+{
+    
+}
+
+char* str_(const char*str,int begin,int end,int flag)
+{
+
+}
