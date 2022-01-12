@@ -20,7 +20,10 @@ struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, in
             status++;
     }
     strbuf **s;
-    s=(strbuf**)malloc(sizeof(strbuf*)*max);
+    if(status>=max-1)
+        s=(strbuf**)malloc(sizeof(strbuf*)*max);
+    else   
+        s=(strbuf**)malloc(sizeof(strbuf*)*(status+1));
     for(int i=0;i<len;i++)
     {
         if(max<=k)
@@ -52,3 +55,4 @@ struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, in
     }
     return s;
 }
+
