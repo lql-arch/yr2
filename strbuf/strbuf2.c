@@ -7,16 +7,16 @@ void strbuf_grow(struct strbuf *sb, size_t extra)
 {
     if(sb->alloc==0)
     {
-        sb->alloc+=extern;
+        sb->alloc+=extra;
     }
     else
     {
-        while(sb->alloc < sb->len + extern)
+        while(sb->alloc < sb->len + extra)
         {
             sb->alloc*=2;
         }
     }
-    sb->len+=len;
+    sb->len+=extra;
 }
 
 void strbuf_add(struct strbuf *sb, const void *data, size_t len)
@@ -24,7 +24,7 @@ void strbuf_add(struct strbuf *sb, const void *data, size_t len)
     char*res=(char*)data;
     int l=sb->len;
     strbuf_grow(sb,len);
-    sb->buf=(char*)realloc(sizeof(char) * sb->alloc + 1);
+    sb->buf=(char*)realloc(sb->buf,sizeof(char) * sb->alloc + 1 );
     memcpy(sb->buf+l,res,len);
     sb->buf[sb->len]='\0';
 }
@@ -33,7 +33,7 @@ void strbuf_addch(strbuf *sb, int c)
 {
     int l=sb->len;
     strbuf_grow(sb,1);
-    sb->buf=(char*)realloc(sizeof(char)*sb->alloc+1);
+    sb->buf=(char*)realloc(sb->buf,sizeof(char) * (sb->alloc+1));
     sb->buf[l]=(char)c;
     sb->buf[sb->len]='\0';
 }
@@ -74,7 +74,7 @@ void strbuf_insert(strbuf *sb, size_t pos, const void *data, size_t len)
         char*res=(char*)data;
         int l=sb->len;
         strbuf_grow(sb,len);
-        sb->buf=(char*)realloc(sizeof(char) * sb->alloc + 1);
+        sb->buf=(char*)realloc(sb->buf,sizeof(char) * (sb->alloc + 1));
         memmove(sb->buf+l,res,len);
         sb->buf[sb->len]='\0';
     }

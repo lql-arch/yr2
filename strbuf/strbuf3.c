@@ -6,7 +6,7 @@
 void strbuf_ishalf(strbuf *sb){
     if (sb->len < sb->alloc /2)
     {
-        sb->buf=(char*)realloc(sizeof(char)*(sb->alloc/2)+1);
+        sb->buf=(char*)realloc(sb->buf,sizeof(char)*((sb->alloc/2)+1));
         sb->alloc/=2;
     } 
 }
@@ -18,11 +18,11 @@ void strbuf_rtrim(strbuf *sb)
         return ;
     }
     int i=0;
-    for(i;sb->buf[i]!=' ' && i!=len;i++)
+    for(i;sb->buf[i]!=' ' && i!=sb->len;i++)
     {}
     sb->len -= i;
     sb->buf=sb->buf + i;
-    sb->buf=(char*)realloc(sizeof(char)*sb->alloc+1);
+    sb->buf=(char*)realloc(sb->buf,sizeof(char)*sb->alloc+1);
     sb->buf[sb->len]='\0';
     strbuf_ishalf(sb);
 }
@@ -34,7 +34,7 @@ void strbuf_ltrim(strbuf *sb)
         return ;
     }
     int i=0;
-    for(i;sb->buf[i]!=' ' && i!=len;i++)
+    for(i;sb->buf[i]!=' ' && i!=sb->len;i++)
     {}
     sb->len -= i;
     sb->buf[sb->len]='\0';

@@ -6,7 +6,7 @@ typedef struct strbuf {
 
 __ssize_t _read_in_full(char *str,int len,int fd);
 
-__ssize_t read_in_full(strbuf *sb,int len,char* fd);
+__ssize_t read_in_full(char *str,int len,char* fd);
 
 int strbuf_getwholeline(strbuf *sb, FILE *fp, int end);
 

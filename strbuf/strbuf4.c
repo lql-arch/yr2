@@ -24,7 +24,7 @@ __ssize_t _read_in_full(char *str,int len,int fd)
 __ssize_t read_in_full(char *str,int len,char* fd){
     FILE *fp;
     int flag=1;
-    if ((fp=fopen(fd,"wb+"))==NUll)
+    if ((fp=fopen(fd,"wb+"))==NULL)
     {
         printf("Can't open %s\n",fd);
         exit(EXIT_FAILURE);

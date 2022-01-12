@@ -11,8 +11,7 @@ void strbuf_malloc(strbuf *sb,size_t alloc){
 
 
 void strbuf_init(strbuf *sb, size_t alloc){
-    static strbuf t=_strbuf_init;
-    memcpy(sb,&t,sizeof(*sb));
+    sb->buf=NULL;
     sb->len=0;
     sb->alloc=alloc;
     if (alloc)
@@ -23,7 +22,7 @@ void strbuf_attach(strbuf *sb, void *str, size_t len, size_t mem){
     strbuf_release(sb);
     sb->alloc=mem;
     sb->len=len;
-    strbuf_malloc(sb,alloc);
+    strbuf_malloc(sb,mem);
     memcpy(sb->buf,str,len);
     sb->buf[sb->len]='\0';
 }
@@ -58,7 +57,7 @@ int strbuf_cmp(const strbuf *first, const strbuf *second){
     {
         return flag;
     }
-    return first->len < second->len ? -1 : a->len == b->len;
+    return first->len < second->len ? -1 : first->len == second->len;
 }
 
 void strbuf_reset(strbuf *sb){
