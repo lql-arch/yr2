@@ -58,10 +58,25 @@ strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
 
 int strbuf_start(strbuf* sb,const char*str)
 {
-    
+    int len1=sb->len;
+    int len2=strlen(str);
+    if (len2>len1)
+        return -1;
+
+    int flag=memcmp(sb->buf,str,len1);
+    if(flag!=0)
+        return 0;
+    else   
+        return 1;
 }
 
-char* str_(const char*str,int begin,int end,int flag)
+char* str_(const char*str,int begin,int end)
 {
-
+    int len1=strlen(str);
+    int len2=end-begin;
+    char*s;
+    s=(char*)malloc(sizeof(char)*(len2+1));
+    memcpy(s,str+begin,len2);
+    s[len2+1]='\0';
+    return s;
 }

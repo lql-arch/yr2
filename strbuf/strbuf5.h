@@ -15,4 +15,4 @@ strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max);
 int strbuf_start(strbuf* sb,const char*str);
 
 //获取字符串从坐标 [begin, end) 的所有内容(可以分成引用和拷贝两个模式)
-char* str_(const char*str,int begin,int end,int flag);
+char* str_(const char*str,int begin,int end);
