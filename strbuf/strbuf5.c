@@ -9,21 +9,22 @@
 
 strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
 {
+    struct strbuf **s=NULL;
     int status=0;
     int j=0,k=0;
-    int *strt;
+    char *strt;
     int tlen=0;
+    
     strt=(char*)malloc(len+1);
     for(int i=0;i<len;i++)
     {
         if(str[i]==terminator)
             status++;
     }
-    strbuf **s;
     if(status>=max-1)
-        s=(strbuf**)malloc(sizeof(strbuf*)*max);
+        s=(struct strbuf**)malloc(sizeof(struct strbuf*)*max);
     else   
-        s=(strbuf**)malloc(sizeof(strbuf*)*(status+1));
+        s=(struct strbuf**)malloc(sizeof(struct strbuf*)*(status+1));
     for(int i=0;i<len;i++)
     {
         if(max<=k)

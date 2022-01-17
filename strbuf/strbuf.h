@@ -1,12 +1,14 @@
 #ifndef _STRBUF_H
 #define _STRBUF_H
 
+#include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <stdbool.h>
-
 struct strbuf {
     int len;
     int alloc;
@@ -35,10 +37,9 @@ void strbuf_ltrim(struct strbuf *sb);
 void strbuf_remove(struct strbuf *sb, size_t pos, size_t len);
 
 ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);
-ssize_t strbuf_read_file(struct strbuf *sb, const char *path, size_t hint);
 int strbuf_getline(struct strbuf *sb, FILE *fp);
 
 struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max);
-bool strbuf_begin_judge(char* target_str, const char* str, int strnlen);
-char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len);
+bool strbuf_begin_judge(char *target_str, const char *str, int strnlen);
+char *strbuf_get_mid_buf(char *target_buf, int begin, int end, int len);
 #endif
