@@ -22,7 +22,7 @@ int option_l=0;//显示文件类型、权限、硬链接的数目、文件拥有
 int option_s=0;                              //half
 int option_t=0;                             //half
 int option_r=0;                            //half
-
+int option=0;
 
 
 char address[PATH_MAX];
@@ -124,8 +124,8 @@ int main(int argc,char **argv)
         }
 
 
-        int option=option_a+option_d+option_F+option_i              \
-                    +option_l+option_R+option_A+option_s+option_t;
+        option=option_a+option_d+option_F+option_i              \
+                +option_l+option_R+option_A+option_s+option_t;
         
         if(num==1&&option!=0)
         {
@@ -138,6 +138,8 @@ int main(int argc,char **argv)
             }
         }
     }
+    
+    printf("\n");
     free(path);
     return 0;
 
@@ -342,14 +344,20 @@ void showFile(char* file)
         L_option(file,&file_into);
     }
 
-    printf("%s",file);
+    if(option!=0)
+    {
+        printf("%s",file);
+        printf("\n");
+    }
+    else 
+    {
+        printf("%-8s ",file);
+    }
 
     // if(option_F)
     // {
     //     file_type(file_into->st_mode);
     // }
-
-    printf("\n");
 }
 
 void L_option(char * file,struct stat *file_into)
