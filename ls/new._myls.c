@@ -12,6 +12,13 @@
 #include <time.h>           
 #include <fcntl.h>          
 
+typedef struct File_List {             // 使用链表存储
+        char *name;                      // 存储文件/文件夹名
+        struct File_List *dir;       // 当name存储文件名时为空 
+        // 当name存储文件夹名时指向文件夹中的文件
+        struct File_List *next;    // 指向下一个（next）
+} file_list;  
+
 int option_a=0;//显示隐藏文件
 int option_F=0;//在不同类型的文件的文件名结尾追加一个字符以示区别。     //suspending
 int option_i=0;//显示节点
