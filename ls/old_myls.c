@@ -12,6 +12,13 @@
 #include <time.h>           
 #include <fcntl.h>          
 
+typedef struct FileInfoList {             // 使用链表存储
+        char *name;                      // 存储文件/文件夹名
+        struct FileInfoList *dir;       // 当name存储文件名时为空 
+        // 当name存储文件夹名时指向文件夹中的文件
+        struct FileInfoList *file;    // 指向下一个（next）
+} file_list;  
+
 int option_a=0;//显示隐藏文件
 int option_F=0;//在不同类型的文件的文件名结尾追加一个字符以示区别。     //suspending
 int option_i=0;//显示节点
@@ -30,6 +37,8 @@ char address[PATH_MAX];
 char temp_path[PATH_MAX];
 // char R_next_arr[100][PATH_MAX];
 // int R_next_num=0;
+
+
 
 //there's no comment.I suggest you dont't read it to protect your head.
 
@@ -148,7 +157,7 @@ int main(int argc,char **argv)
 
 void file_path(char* cata)
 {
-    char arr[100];
+    char arr[256];
 
     if(cata[0]=='.' && cata[1]=='/')
     {
@@ -167,7 +176,7 @@ void file_path(char* cata)
 
 void my_ls(char* cata)
 {
-    char arr[100];
+    char arr[256];
     DIR *ptr;
     struct dirent *dir_ptr;
     struct stat st_buf;
@@ -288,7 +297,7 @@ void R_option(char* arr,char (*R_arr)[PATH_MAX],int R_num)
                 {
                     showFile(next_dir_ptr->d_name);
 
-                    char file[100];
+                    char file[256];
                     strcpy(file,next_dir_ptr->d_name);
 
                     struct stat file_into;
