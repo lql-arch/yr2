@@ -94,17 +94,17 @@ int main(int argc,char **argv)
                     }else if(argv[i][k]=='s')
                     {            
                         option_s+=1;
-                        printf("-s dort is not complete.\n");
+                        printf("-s sort is not complete.\n");
                         continue;
                     }else if(argv[i][k]=='t')
                     {            
                         option_t+=1;
-                        printf("-t dort is not complete.\n");
+                        printf("-t sort is not complete.\n");
                         continue;
                     }else if(argv[i][k]=='r')
                     {            
                         option_r+=1;
-                        printf("-r dort is not complete.\n");
+                        printf("-r sort is not complete.\n");
                         continue;
                     }
                     else{
