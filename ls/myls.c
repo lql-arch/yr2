@@ -24,7 +24,7 @@ int option_t=0;                             //half
 int option_r=0;                            //half
 int option=0;
 
-//too many files will make mistakes.it seems tahat I should change my storage method.
+//too many files will make mistakes.it seems that I should change my storage method.
 
 char address[PATH_MAX];
 char temp_path[PATH_MAX];
