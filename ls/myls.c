@@ -24,6 +24,7 @@ int option_t=0;                             //half
 int option_r=0;                            //half
 int option=0;
 
+//too many files will make mistakes.it seems tahat I should change my storage method.
 
 char address[PATH_MAX];
 char temp_path[PATH_MAX];
@@ -138,7 +139,7 @@ int main(int argc,char **argv)
             }
         }
     }
-    
+
     printf("\n");
     free(path);
     return 0;
@@ -289,6 +290,7 @@ void R_option(char* arr,char (*R_arr)[PATH_MAX],int R_num)
 
                     char file[100];
                     strcpy(file,next_dir_ptr->d_name);
+
                     struct stat file_into;
                     if( stat(file,&file_into)==-1)
                     {
