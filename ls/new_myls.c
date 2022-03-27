@@ -36,9 +36,9 @@ int option_R=0;//迭代显示目录下所有的子目录。
 int option_A=0;//all）显示所有文件，不包括以 .（自身目录）和 .. （父目录）。        //suspending
 int option_d=0;//显示目录本身的信息，而不是列出目录下的文件。
 int option_l=0;//显示文件类型、权限、硬链接的数目、文件拥有者、文件所在的组、大小、日期和文件名。
-int option_s=0;                              //half
-int option_t=0;                             //half
-int option_r=0;                            //half
+int option_s=0;                              
+int option_t=0;                             
+int option_r=0;                            
 int option=0;
 
 //too many files will make mistakes.it seems that I should change my storage method.
