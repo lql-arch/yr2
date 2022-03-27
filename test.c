@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include <stdlib.h>
 // #include<stdlib.h>
 // int main()
 // {
@@ -15,26 +16,26 @@
 //     }
 // }
 
- #include<string.h>
-#include<stdio.h>
-int main(void)
-{
-    char input[16]="   abc d";
-    char*p;
-    /*strtok places a NULL terminator
-    infront of the token,if found*/
-    p=strtok(input," ");
-    while(p)
-    {
-        printf("%s\n",p);
-        /*Asecond call to strtok using a NULL
-        as the first parameter returns a pointer
-        to the character following the token*/
-    p=strtok(NULL," ");
-    }
-    return 0;
+//  #include<string.h>
+// #include<stdio.h>
+// int main(void)
+// {
+//     char input[16]="   abc d";
+//     char*p;
+//     /*strtok places a NULL terminator
+//     infront of the token,if found*/
+//     p=strtok(input," ");
+//     while(p)
+//     {
+//         printf("%s\n",p);
+//         /*Asecond call to strtok using a NULL
+//         as the first parameter returns a pointer
+//         to the character following the token*/
+//     p=strtok(NULL," ");
+//     }
+//     return 0;
  
-}
+// }
 
 // #include <stdio.h>  
 // #include <stdlib.h>  
@@ -55,3 +56,16 @@ int main(void)
 //     }  
 //     return 0;  
 // }
+
+int main()
+{
+    char *arr=NULL;
+    arr=(char*)malloc(11);
+    memset(arr,0,10);
+    arr[3]=99;
+    arr[11]='\0';
+    for(int i=0;i<10;i++)
+    {
+        printf("%c\n",arr[i]);
+    }
+}

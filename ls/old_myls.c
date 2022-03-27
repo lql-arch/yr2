@@ -137,7 +137,6 @@ int main(int argc,char **argv)
             while(--num)
             {
                 file_path(*++argv);
-                
             }
         }
     }
