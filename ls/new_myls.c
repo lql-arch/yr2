@@ -14,6 +14,8 @@
 
 //#define TEST
 
+//憨批才用链表,问题根本没解决 --lql
+
 //file-reverse?
 typedef struct File_List {
         char *name;
@@ -81,7 +83,7 @@ void join(file_list* node,list_head* f_path);
 void join_temp(temp_head* f_head,char* d_name);
 void t_sort(temp_head* f_head,char* d_name);
 void s_sort(temp_head* f_head,char* d_name);
-void r_sort(temp_head* f_head);
+f_temp* r_sort(temp_head* f_head);
 void filename_swap(int num,char (*R_arr)[PATH_MAX],file_list *head );
 void temp_free();
 
@@ -307,6 +309,11 @@ void R_option(temp_head* list_t,int size)
     printf("总用量 %d\n",size);
     size=0;
 
+    if(option_r)
+    {
+        p = r_sort(list_t);
+    }
+
     while(p)
     {
         showFile(p->name);
@@ -446,6 +453,11 @@ void l_option(temp_head* list_t,int size)
     printf("%s:\n",s_getpath);
     printf("总用量 %d\n",size);
     size=0;
+
+    if(option_r)
+    {
+        p = r_sort(list_t);
+    }
 
     while(p)
     {
@@ -837,6 +849,21 @@ void s_sort(temp_head* f_head,char* d_name)
     temp->next = node;
     return ;
 
+}
+
+f_temp* r_sort(temp_head* f_head)
+{
+	f_temp *newHead = NULL;
+	f_temp*node;
+	while (f_head->start!= NULL) {
+		node = f_head->start;
+		f_head->start = f_head->start->next;
+		
+		node->next = newHead;
+		newHead = node;
+	}
+
+	return newHead;
 }
 
 void filename_swap(int num,char (*R_arr)[PATH_MAX],file_list *head )
