@@ -14,7 +14,7 @@
 
 //#define TEST
 
-//憨批才用链表,问题根本没解决 --lql
+//问题根本没解决
 
 //file-reverse?
 typedef struct File_List {
