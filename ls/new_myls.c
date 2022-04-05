@@ -16,11 +16,10 @@
 
 //问题根本没解决
 
-//file-reverse?
-typedef struct File_List {
-        char *name;
-        struct File_List *next;
-} file_list;  
+// typedef struct File_List {
+//         char *name;
+//         struct File_List *next;
+// } file_list;  
 
 typedef struct temp{
     char* name;
@@ -45,9 +44,9 @@ int option=0;
 
 char address[PATH_MAX];
 char temp_path[PATH_MAX];
-typedef struct _List{
-	file_list* head;
-}list_head;
+// typedef struct _List{
+// 	file_list* head;
+// }list_head;
 
 f_temp start; 
 
@@ -55,7 +54,7 @@ typedef struct __List{
 	f_temp *start; 
 }temp_head;
 
-list_head list;
+temp_head list;
 temp_head list_t;
 
 //file_free* first_ptr;
@@ -78,15 +77,14 @@ char* get_uid(uid_t uid);
 char* get_gid(gid_t gid);
 void R_option(temp_head* list_t,int size);
 void l_option(temp_head* list_t,int size);
-char file_collect(char* cata,list_head* path);
-void join(file_list* node,list_head* f_path);
+//char file_collect(char* cata,temp_head* path);
+//void join(char* d_name,temp_head* f_path);
 void join_temp(temp_head* f_head,char* d_name);
 void t_sort(temp_head* f_head,char* d_name);
 void s_sort(temp_head* f_head,char* d_name);
 f_temp* r_sort(temp_head* f_head);
-void filename_swap(int num,char (*R_arr)[PATH_MAX],file_list *head );
+void filename_swap(int num,char (*R_arr)[PATH_MAX],f_temp *head );
 void temp_free();
-
 
 int main(int argc,char **argv)
 {
@@ -184,7 +182,7 @@ int main(int argc,char **argv)
         printf("\n");
 
     free(path);
-    return 0;
+    exit(0);
 
 }
 
@@ -265,7 +263,7 @@ void my_ls(char* cata)
                         //exit(-1); 
                         continue;
                     }
-                    if(option_a==0 && (strcmp(dir_ptr->d_name,".")==0 && strcmp(dir_ptr->d_name,"..")==0) )
+                    if(option_a==0 && (strcmp(dir_ptr->d_name,".")==0 || strcmp(dir_ptr->d_name,"..")==0) )
                         continue;
                     else
                         size += st_buf.st_blocks/2; 
@@ -278,7 +276,18 @@ void my_ls(char* cata)
             }
 
             if(option_R)
+            {
+#ifdef TEST
+            f_temp* RT = list_t.start;
+            printf("\n");
+            while(RT)
+            {
+                printf("%s\t",RT->name);
+                RT = RT->next;
+            }
+#endif
                 R_option(&list_t,size);
+            }
 
             if(option_l!=0 && option_R==0)
                 l_option(&list_t,size);
@@ -300,7 +309,7 @@ void R_option(temp_head* list_t,int size)
     f_temp* p = list_t->start; 
     char path[PATH_MAX];
     struct stat st_buf;
-    list.head = NULL;
+    list.start = NULL;
     int num=0;
     char *s_getpath = NULL;
     s_getpath = getcwd(NULL,0);
@@ -316,11 +325,9 @@ void R_option(temp_head* list_t,int size)
 
     while(p)
     {
-        showFile(p->name);
-
         if(stat(p->name,&st_buf)==-1)
         {
-            if(lstat(p->name,&st_buf)==-1)
+            //if(lstat(p->name,&st_buf)==-1)
             {
                 fprintf(stderr,"[Error]%s Error:%s .\n",p->name,strerror(errno));
                 //exit(-1);
@@ -328,16 +335,14 @@ void R_option(temp_head* list_t,int size)
                 continue;
             }
         }else{
+            showFile(p->name);
             if(S_ISDIR(st_buf.st_mode))
             {
-                if(option_a==0 && p->name[0]=='.')
+                if(option_a==0 && (strcmp(p->name,".")==0 || strcmp(p->name,"..")==0))
                 {
                 }else{
-                    static file_list * node ;
-                    node = (file_list*)malloc(sizeof(file_list));
-                    node -> name = (char*)malloc(strlen(p->name)+1);
-                    strcpy(node->name,p->name);
-                    join(node,&list);
+                    join_temp(&list,p->name);
+                    //printf("%s\n",list.head->name);
                     if(strcmp(p->name,".")!=0 && strcmp(p->name,"..")!=0)
                         num++;
                 }
@@ -346,20 +351,24 @@ void R_option(temp_head* list_t,int size)
 
         p = p->next;
     }
-    temp_free();
 
 #ifdef TEST
-        file_list *t = list.head ;
+        f_temp *t = list.start ;
         while(t)
         {
             printf("text:%s\n",t->name);
             t = t->next;
         }
 #endif
+
+    if(list_t->start != NULL)
+        temp_free();
+
     char R_arr[num][PATH_MAX];
 
+    filename_swap(num,R_arr,list.start);
 
-    filename_swap(num,R_arr,list.head);
+
 #ifdef TEST
         char* t=NULL;
         t=getcwd(NULL,0);
@@ -368,9 +377,10 @@ void R_option(temp_head* list_t,int size)
 #endif
 
     int i=0;
+    char *getpath = NULL;
     while(i<num)
     {
-        if(strcmp(R_arr[i],".")==0 && strcmp(R_arr[i],"..")==0)
+        if(strcmp(R_arr[i],".")==0 || strcmp(R_arr[i],"..")==0)
         {
             continue;
         }
@@ -380,10 +390,8 @@ void R_option(temp_head* list_t,int size)
         struct stat buf;
         int flag=0;
 
-        char *getpath = NULL;
         getpath = getcwd(NULL,0);
         strcpy(path,getpath);
-        //printf("test1:%s\n",path);
 
         if(path[strlen(path)-1]!='/')
             strcat(path,"/");
@@ -393,25 +401,24 @@ void R_option(temp_head* list_t,int size)
 #ifdef TEST
         char* t=NULL;
         t=getcwd(NULL,0);
-        printf("t-test:%s\n",t);
+        printf("t-test:path:%s \t t:%s\n",path,t);
         free(t);
 #endif
         if( (ptr=opendir(path))==NULL)
         {
             flag=1;
-            fprintf(stderr,"(root)Warning:%s is not a directory,%s.\n",path,strerror(errno));
+            fprintf(stderr,"(not root)Warning:%s is not a directory,%s.\n",path,strerror(errno));
             showFile(path);
         }
         else{
             while((dir_ptr=readdir(ptr))!=NULL)
             {
-                //printf("%s\n",dir_ptr->d_name);
                 join_temp(list_t,dir_ptr->d_name);
                 if(stat(dir_ptr->d_name,&buf) == -1 )
                 {
                     //if(lstat(p->name,&st_buf)<0)
                     {
-                        fprintf(stderr,"[Error]%s-%s Error:%s .\n",path,dir_ptr->d_name,strerror(errno));
+                        fprintf(stderr,"[Error]%s/%s Error:%s .\n",path,dir_ptr->d_name,strerror(errno));
                         //exit(-1);
                         continue;
                     }
@@ -421,6 +428,16 @@ void R_option(temp_head* list_t,int size)
             }
             
         }
+#ifdef TEST
+        f_temp* RT = list_t->start;
+        printf("\n");
+        while(RT)
+        {
+            printf("%s\t",RT->name);
+            RT = RT->next;
+        }
+#endif
+
         R_option(list_t,size);
         size=0;
         if(flag==0)
@@ -433,9 +450,9 @@ void R_option(temp_head* list_t,int size)
         chdir(getpath);
         i++;
 
-        free(getpath);
     }
-    
+    free(getpath);
+    free(s_getpath);
 
     return ;
 }
@@ -445,7 +462,7 @@ void l_option(temp_head* list_t,int size)
     f_temp* p = list_t->start; 
     char path[PATH_MAX];
     struct stat st_buf;
-    list.head = NULL;
+    list.start = NULL;
     int num=0;
     char *s_getpath = NULL;
     s_getpath = getcwd(NULL,0);
@@ -464,7 +481,6 @@ void l_option(temp_head* list_t,int size)
         showFile(p->name);
         p = p->next;
     }
-    //printf("\n");
     temp_free();
 
     return ;
@@ -506,7 +522,7 @@ void showFile(char* file)
         L_show(file,&file_into);
     }
 
-    if(option!=0)
+    if(option_l!=0 || option_R!=0)
     {
         struct stat buf;
         char *out=NULL;
@@ -553,9 +569,9 @@ void L_show(char * file,struct stat *file_into)
 
     printf("%s ",str);
     printf("%4d ",(int)file_into->st_nlink);
-    printf("%-6s ",get_uid(file_into->st_uid));
-    printf("%-6s ",get_gid(file_into->st_gid));
-    printf("%6d ",file_into->st_size);
+    printf("%-10s ",get_uid(file_into->st_uid));
+    printf("%-10s ",get_gid(file_into->st_gid));
+    printf("%-ld ",file_into->st_size);
     printf("%.20s ",4+ctime(&file_into->st_mtime));
     //printf("%ld ",file_into->st_mtime);
     
@@ -669,58 +685,6 @@ char* get_gid(gid_t gid)
         sprintf(name,"%s",user->gr_name);
 
     return name;
-}
-
-
-char file_collect(char* cata,list_head* path)
-{
-    DIR* dir;
-    if((dir = opendir(cata)) == NULL)
-    {
-        fprintf(stderr,"Error(file_collect):cannot open next cata %s:%s\n",cata,strerror(errno));
-        //exit(-1);
-    }
-
-    struct dirent *rent;
-    while((rent = readdir(dir)) != NULL)
-    {
-        //if(rent->d_name[0]=='.')
-        if(strcmp(rent->d_name,".")==0 || strcmp(rent->d_name,"..")==0)
-        {
-            continue;
-        }
-        file_list* node = (file_list*)malloc(sizeof(file_list));
-        if(node == NULL)
-        {
-            fprintf(stderr,"Error(%s): malloc error",cata);
-            exit(-1);
-        }
-        memset(node,0,sizeof(file_list));
-        node->name = (char*)malloc(strlen(rent->d_name)+1);
-        if (node->name == NULL)
-        {
-            free(node);
-            fprintf(stderr,"Error(%s): filename is not stored.");
-            exit(-1);
-        }
-        
-        strcpy(node->name,rent->d_name);
-
-        join(node,path);
-
-    }
-    closedir(dir);
-}
-
-void join(file_list* node,list_head* path){
-    if (path->head == NULL) { 
-        path->head = node;
-        return ;
-    }
-    node->next = path->head;
-    path->head = node;
-    return; 
-
 }
 
 void join_temp(temp_head* f_head,char* d_name){
@@ -866,9 +830,9 @@ f_temp* r_sort(temp_head* f_head)
 	return newHead;
 }
 
-void filename_swap(int num,char (*R_arr)[PATH_MAX],file_list *head )
+void filename_swap(int num,char (*R_arr)[PATH_MAX],f_temp *head )
 {
-    file_list* p ;
+    f_temp* p ;
     int r=0;
     p = head;
     while(p && r<num)
@@ -903,9 +867,63 @@ void temp_free()
 
 
 
+// char file_collect(char* cata,list_head* path)
+// {
+//     DIR* dir;
+//     if((dir = opendir(cata)) == NULL)
+//     {
+//         fprintf(stderr,"Error(file_collect):cannot open next cata %s:%s\n",cata,strerror(errno));
+//         //exit(-1);
+//     }
 
+//     struct dirent *rent;
+//     while((rent = readdir(dir)) != NULL)
+//     {
+//         //if(rent->d_name[0]=='.')
+//         if(strcmp(rent->d_name,".")==0 || strcmp(rent->d_name,"..")==0)
+//         {
+//             continue;
+//         }
+//         file_list* node = (file_list*)malloc(sizeof(file_list));
+//         if(node == NULL)
+//         {
+//             fprintf(stderr,"Error(%s): malloc error",cata);
+//             exit(-1);
+//         }
+//         memset(node,0,sizeof(file_list));
+//         node->name = (char*)malloc(strlen(rent->d_name)+1);
+//         if (node->name == NULL)
+//         {
+//             free(node);
+//             fprintf(stderr,"Error(%s): filename is not stored.");
+//             exit(-1);
+//         }
+        
+//         strcpy(node->name,rent->d_name);
 
+//         join(node,path);
 
+//     }
+//     closedir(dir);
+// }
+
+// void join(char* d_name,list_head* path){
+//     file_list * node;
+//     file_list* last;
+//     node = (file_list*)malloc(sizeof(file_list));
+//     node -> name = (char*)malloc(strlen(d_name)+1);
+//     strcpy(node->name,d_name);
+
+//     node->next=NULL;
+
+//     if (path->head == NULL) { 
+//         path->head = node;
+//     }else{
+//         last->next = node;
+//     }
+//     last = node;
+
+// }
 
 // void file_type(mode_t mode)//不能判断文件是否为可执行文件,割了.
 // {
