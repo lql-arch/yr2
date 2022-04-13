@@ -25,6 +25,7 @@ void mycd(char *optiton);
 int command(char *arg);
 
 char temp[4] = "";
+int back_sleep = 0;
 
 typedef void (*signal_handler)(int);
 
@@ -53,6 +54,11 @@ int main(int argc, char **argv)
 
     while(1)
     {
+        if(back_sleep == 1)
+        {
+            back_sleep = 0;
+            sleep(1);
+        }
         memset(m_buf,0,512);
         fflush(stdout);
         print_prompt();
@@ -264,12 +270,13 @@ void second_and_mycmd(char** para,int paranum)
             if(i == paranum-1)
             {
                 back = 1;
+                back_sleep = 1;
                 int t_len = strlen(para[i]);
-                memmove(para[i],para[i]+1,t_len-1);
-                para[i][t_len-1] = '\0'; 
+                // memmove(para[i],para[i]+1,t_len-1);
+                // para[i][t_len-1] = '\0'; 
                 if(t_len >= 2)
                 {
-                    printf("bash:%s:未找到命令 \n",para[i]);
+                    printf("bash:%s:未找到命令 \n",para[i]+1);
                 }
                 break;
             }else{
@@ -350,7 +357,7 @@ void second_and_mycmd(char** para,int paranum)
 
     for(int i=0;i < paranum;i++)
     {
-        if(strcmp(para[i],"|")==0)
+        if(strcmp(para[i],"|")==0 || strcmp(para[i],"&")==0)
         {
             num[number++] = i;
         }
