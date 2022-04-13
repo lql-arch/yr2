@@ -12,7 +12,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-//double
+// file name: " "
+// >> and | again
+//free
+//^C(2)
 
 void print_prompt(); 
 void get_user_input(char *buf);
@@ -20,6 +23,14 @@ void second_and_mycmd(char** para,int pararnum);
 void ex_input(char* buf,char** para,int* paranum);
 void mycd(char *optiton);
 int command(char *arg);
+
+char temp[4] = "";
+
+typedef void (*signal_handler)(int);
+
+void signal_handler_fun(int signum) {
+   strcpy(temp,"^C");
+}
 
 
 int main(int argc, char **argv)
@@ -31,7 +42,6 @@ int main(int argc, char **argv)
     char **para=NULL;
     int paraNum = 0;
     para = (char**)malloc(sizeof(char*)*100);
-    //memset(para,0,100);
 
     m_buf = (char*)malloc(sizeof(char) * 512);
 
@@ -47,7 +57,11 @@ int main(int argc, char **argv)
         fflush(stdout);
         print_prompt();
         get_user_input(m_buf);
-        //signal(SIGINT, SIG_IGN);
+        if(strcmp(temp,"^C") == 0)
+        {
+            strcpy(temp,"\0");
+            continue;
+        }
         if( strcmp(m_buf, "exit\n") == 0 )
         {
             break;
@@ -114,7 +128,14 @@ void get_user_input(char *buf)
     int ch;
 
     memset(buf, 0, 512);
-    ch = getchar();
+    signal(SIGINT, signal_handler_fun);
+    if(strcmp(temp,"^C") == 0)
+    {
+        return ;
+    }
+    else{
+        ch = getchar();
+    }
     while(len<511 && ch != '\n')
     {
         buf[len++] = ch;
@@ -451,13 +472,15 @@ void second_and_mycmd(char** para,int paranum)
                     fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
                     dup2(fd2,1);
 
-                    fd5 = open("/tmp/shell_flag.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
-                    write(fd5,"111111\n",7);
-                    close(fd5);
+                    if(pip == 1)
+                    {        
+                        fd5 = open("/tmp/shell_flag.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                        write(fd5,"111111\n",7);
+                        close(fd5);
+                    }
                 }else{
                     fd2 = open("/tmp/temp_shell.txt",O_RDONLY);
                     dup2(fd2,0);
-                    
                 }
             }
             execvp(pro[0],pro);
