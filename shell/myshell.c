@@ -26,6 +26,7 @@ int command(char *arg);
 
 char temp[4] = "";
 int back_sleep = 0;
+char cd_temp[512] = "";
 
 typedef void (*signal_handler)(int);
 
@@ -221,6 +222,7 @@ void second_and_mycmd(char** para,int paranum)
     char** pro=NULL;
     pro = (char**)malloc(sizeof(char*)*paranum);
 
+    flag = 0;
     for(int i=0;i<paranum;i++)
     {
         if(strcmp(para[i],"cd")==0)
@@ -336,25 +338,6 @@ void second_and_mycmd(char** para,int paranum)
         }
     }
 
-    if(strcmp(para[0],"cd") == 0)
-    {
-        if(paranum < 2)
-        {
-            mycd(NULL);
-        }
-        else if( paranum > 2 && strcmp(para[2],"|")!=0 )
-        {
-            fprintf(stderr,"bash: cd: 参数太多\n");
-        }
-        else
-        {
-            if( flag==1 && paranum < 2 )
-            {
-                mycd(para[1]);
-            }  
-        }
-    }
-
     for(int i=0;i < paranum;i++)
     {
         if(strcmp(para[i],"|")==0 || strcmp(para[i],"&")==0)
@@ -396,103 +379,144 @@ void second_and_mycmd(char** para,int paranum)
         }
         if(pid == 0)
         {
-            if(din == 0 && dout == 0)
+            if(strcmp(pro[0],"cd") == 0)
             {
-                if(!command(pro[0]))
+                if(len < 1)
                 {
-                    printf("bash: %s:未找到命令\n", pro[0]);
-                    exit(0);
-                }
-            }
-            if(din > 0)// 输入重定向<
-            {
-                int d_flag = 0;
-                for(int i = 0 ;i < len ;i++)
-                {
-                    if(strncmp(pro[i], "<<",2) == 0)
+                    if(pip != 0)
                     {
-                        d_flag = 1;
-                        file = pro[i+1];
-                        pro[i] = NULL;
-                        break;
-                    }
-                    else if(strncmp(pro[i], "<",1) == 0)
+                        fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                        dup2(fd2,1);
+                    }else
                     {
-                        file = pro[i+1];
-                        pro[i] = NULL;
-                        break;
+                        mycd(NULL);
                     }
                 }
-                if(!command(pro[0]))
+                else if(len > 2)
                 {
-                    printf("bash: %s:未找到命令\n", pro[0]);
-                    exit(0);
+                    fprintf(stderr,"bash: cd: 参数太多\n");
                 }
-                if(d_flag == 1)
+                else if( flag == 1 )
                 {
-                    lseek(fd,0,SEEK_END);
-                }
-                fd = open(file, O_RDONLY);
-                dup2(fd, 0);
-            }
-            if(dout > 0) // 输出重定向符>
-            {
-                int d_flag = 0;
-                for(int i = 0 ;i < len ;i++)
-                {
-                    if(strncmp(pro[i], ">>",2) == 0)
+                    if(pip != 0)
                     {
-                        d_flag = 1;
-                        file = pro[i+1];
-                        pro[i] = NULL;
-                        break;
+                        fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                        dup2(fd2,1);
+                    }else
+                    {
+                        mycd(pro[1]);
                     }
-                    else if(strncmp(pro[i], ">",1) == 0  )
-                    {
-                        file = pro[i+1];
-                        pro[i] = NULL;
-                        break;
-                    }       
                 }
-                if(!command (pro[0]))
-                {
-                    printf("bash: %s:未找到命令\n", pro[0]);
-                    exit(0);
-                }
-                if(d_flag == 1)
-                {
-                    //lseek(fd,0,SEEK_END);
-                    fd = open(file, O_RDWR|O_CREAT|O_APPEND, 0644);
-                }else{
-                    fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0644);
-                }
-                dup2(fd, 1);
-            }
-            if(pip_flag > 0)
-            {
-                fd5 = open("/tmp/shell_flag.txt",O_RDONLY);
-                char temp_buf[7];
-                int fd5_len = read(fd5,temp_buf,6);
-                temp_buf[6] = '\0';
-                if( strcmp(temp_buf,"111111") != 0 )
-                {
-                    fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
-                    dup2(fd2,1);
 
-                    if(pip == 1)
-                    {        
-                        fd5 = open("/tmp/shell_flag.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
-                        write(fd5,"111111\n",7);
-                        close(fd5);
-                    }
-                }else{
-                    fd2 = open("/tmp/temp_shell.txt",O_RDONLY);
-                    dup2(fd2,0);
+                if(pip == 1)
+                {        
+                    fd5 = open("/tmp/shell_flag.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                    write(fd5,"111111\n",7);
+                    close(fd5);
                 }
+
+                fflush(stdout);
+                exit(0);
+            }else
+            {
+                if(din == 0 && dout == 0)
+                {
+                    if(!command(pro[0]))
+                    {
+                        printf("bash: %s:未找到命令\n", pro[0]);
+                        exit(0);
+                    }
+                }
+                if(din > 0)// 输入重定向<
+                {
+                    int d_flag = 0;
+                    for(int i = 0 ;i < len ;i++)
+                    {
+                        if(strncmp(pro[i], "<<",2) == 0)
+                        {
+                            d_flag = 1;
+                            file = pro[i+1];
+                            pro[i] = NULL;
+                            break;
+                        }
+                        else if(strncmp(pro[i], "<",1) == 0)
+                        {
+                            file = pro[i+1];
+                            pro[i] = NULL;
+                            break;
+                        }
+                    }
+                    if(!command(pro[0]))
+                    {
+                        printf("bash: %s:未找到命令\n", pro[0]);
+                        exit(0);
+                    }
+                    if(d_flag == 1)
+                    {
+                        lseek(fd,0,SEEK_END);
+                    }
+                    fd = open(file, O_RDONLY);
+                    dup2(fd, 0);
+                }
+                if(dout > 0) // 输出重定向符>
+                {
+                    int d_flag = 0;
+                    for(int i = 0 ;i < len ;i++)
+                    {
+                        if(strncmp(pro[i], ">>",2) == 0)
+                        {
+                            d_flag = 1;
+                            file = pro[i+1];
+                            pro[i] = NULL;
+                            break;
+                        }
+                        else if(strncmp(pro[i], ">",1) == 0  )
+                        {
+                            file = pro[i+1];
+                            pro[i] = NULL;
+                            break;
+                        }       
+                    }
+                    if(!command (pro[0]))
+                    {
+                        printf("bash: %s:未找到命令\n", pro[0]);
+                        exit(0);
+                    }
+                    if(d_flag == 1)
+                    {
+                        //lseek(fd,0,SEEK_END);
+                        fd = open(file, O_RDWR|O_CREAT|O_APPEND, 0644);
+                    }else{
+                        fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0644);
+                    }
+                    dup2(fd, 1);
+                }
+                if(pip_flag > 0)
+                {
+                    fd5 = open("/tmp/shell_flag.txt",O_RDONLY);
+                    char temp_buf[7];
+                    int fd5_len = read(fd5,temp_buf,6);
+                    temp_buf[6] = '\0';
+                    if( strcmp(temp_buf,"111111") != 0 )
+                    {
+                        fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                        dup2(fd2,1);
+
+                        if(pip == 1)
+                        {        
+                            fd5 = open("/tmp/shell_flag.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                            write(fd5,"111111\n",7);
+                            close(fd5);
+                        }
+                    }else{
+                        fd2 = open("/tmp/temp_shell.txt",O_RDONLY);
+                        dup2(fd2,0);
+                    }
+                }
+                execvp(pro[0],pro);
+                fflush(stdout);
+                exit(0);
             }
-            execvp(pro[0],pro);
-            fflush(stdout);
-            exit(0);
         }
         //printf("pid:%d ppid:%d\n",getpid(),getppid());
 
@@ -613,13 +637,20 @@ void mycd(char *optiton)
         strcat(address,"\0");
         optiton--;
     }
+    else if(strcmp(optiton,"-")==0)
+    {
+        strcpy(address,cd_temp);
+    }
     else 
     {
         strcpy(address,optiton);
     }
+
     if(chdir(address))
     {
-        fprintf(stderr,"bash: cd: \"%s\": 没有那个文件或目录\n",optiton);
+        fprintf(stderr,"bash: cd:\"%s\": 没有那个文件或目录",optiton);
+    }else{
+        strcpy(cd_temp,pass);
     }
 
 
