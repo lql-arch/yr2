@@ -17,6 +17,8 @@
 //free
 //^C(2)
 
+//cd and >> 
+
 void print_prompt(); 
 void get_user_input(char *buf);
 void second_and_mycmd(char** para,int pararnum);
@@ -160,6 +162,7 @@ void ex_input(char* buf,char **para,int* pararnum)
     char *t1 = buf;
     char *t2 = buf;
     int num=0;
+    int flag = 0;
     while(t1)
     {
         if(t1[0]=='\n' || t1[0] == '\0')
@@ -174,6 +177,39 @@ void ex_input(char* buf,char **para,int* pararnum)
             num=0;
             while(t2[0] !=' ' && t2[0] != '\n' && t2[0] != '\0')
             {
+                if(t2[0] == '\'')
+                {
+                    flag = 1;
+                    num++;
+                    t2++;
+                    t1++;
+                    while(t2[0] != '\'' && t2[0] != '\0')
+                    {
+                        num++;
+                        t2++;
+                    }
+                    num-=2;
+                }
+                if(t2[0] == '\"')
+                {
+                    flag = 1;
+                    num++;
+                    t2++;
+                    t1++;
+                    while(t2[0] != '\"' && t2[0] != '\0')
+                    {
+                        num++;
+                        t2++;
+                    }
+                    num-=2;
+                }
+
+                // if(flag == 1)
+                // {
+                //     flag = 0;
+                //     break;
+                // }
+
                 if(t2[0] == '\\')
                 {
                     t1++;
@@ -192,7 +228,7 @@ void ex_input(char* buf,char **para,int* pararnum)
                     para[*pararnum] = (char*)realloc(para[*pararnum],sizeof(char)*num+1);
                 memcpy(para[*pararnum],t1,num+1);
                 para[*pararnum][num] = '\0';
-                // printf("para[%d]:%s\n",*pararnum,para[*pararnum]);
+                //printf("para[%d]:%s\n",*pararnum,para[*pararnum]);
                 *pararnum +=1;
             }
             t1 = t2;    
@@ -208,11 +244,10 @@ void second_and_mycmd(char** para,int paranum)
     int back=0; //后台
     int din=0; //标准输入
     int dout=0; //标准输出
-    char* file;
-    int fd;
+    int fd[10];
     char ch;
     char *buf=(char*)malloc(sizeof(char)*512);
-    pid_t pid;
+    pid_t pid = 0;
     int num[100];
     int number=1;
     int state;
@@ -299,7 +334,7 @@ void second_and_mycmd(char** para,int paranum)
                 return ;
             }
             else{
-                din += 100;
+                din += 1;
             }
         }
         else if(strncmp(para[i],"<",1)==0 )//&& ((strlen(para[i])>=2 && strncmp(para[i],"<",2)!=0) || strlen(para[i]) < 2)
@@ -322,7 +357,7 @@ void second_and_mycmd(char** para,int paranum)
                 return ;
             }
             else{
-                dout += 100;
+                dout += 1;
             }
         }
         else if(strncmp(para[i],">",1)==0 )//&& ((strlen(para[i]) >= 2 && strncmp(para[i],">",2)!=0) || strlen(para[i]) < 2) 
@@ -359,8 +394,14 @@ void second_and_mycmd(char** para,int paranum)
     }
     pro[num[1]] = NULL;
 
+    char *file[10];
+    int d_count = 0;
+    int index = 0;
+    pid_t pid2  = 0;
+    int status2;
+    int d_flag = 0;
     int k=2;
-    int fd2,fd5;
+    int fd2,fd3,fd5;
     int fd2_flag = 0;
     int pip_flag = 0;
     if(pip > 0)
@@ -372,6 +413,28 @@ void second_and_mycmd(char** para,int paranum)
 
     while(pip >= 0)
     {
+        if(strcmp(pro[0],"cd") == 0)
+        {
+            if(len < 1)
+            {
+                if(pip == 0)
+                {
+                    mycd(NULL);
+                }
+            }
+            else if(len > 2)
+            {
+                fprintf(stderr,"bash: cd: 参数太多\n");
+            }
+            else if( flag == 1 )
+            {
+                if(pip == 0)
+                {
+                    mycd(pro[1]);
+                }
+            }
+        }
+
         if((pid = fork()) < 0)
         {
             printf("Error:fork error\n");
@@ -387,14 +450,7 @@ void second_and_mycmd(char** para,int paranum)
                     {
                         fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
                         dup2(fd2,1);
-                    }else
-                    {
-                        mycd(NULL);
                     }
-                }
-                else if(len > 2)
-                {
-                    fprintf(stderr,"bash: cd: 参数太多\n");
                 }
                 else if( flag == 1 )
                 {
@@ -402,9 +458,6 @@ void second_and_mycmd(char** para,int paranum)
                     {
                         fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
                         dup2(fd2,1);
-                    }else
-                    {
-                        mycd(pro[1]);
                     }
                 }
 
@@ -414,8 +467,6 @@ void second_and_mycmd(char** para,int paranum)
                     write(fd5,"111111\n",7);
                     close(fd5);
                 }
-
-                fflush(stdout);
                 exit(0);
             }else
             {
@@ -427,69 +478,80 @@ void second_and_mycmd(char** para,int paranum)
                         exit(0);
                     }
                 }
-                if(din > 0)// 输入重定向<
+                else
                 {
-                    int d_flag = 0;
                     for(int i = 0 ;i < len ;i++)
                     {
-                        if(strncmp(pro[i], "<<",2) == 0)
+                        if(strncmp(pro[i], "<<",2) == 0 ||  strncmp(pro[i], ">>",2) == 0)
                         {
                             d_flag = 1;
-                            file = pro[i+1];
+                            file[d_count] = (char*)malloc(strlen(pro[i+1])+1);
+                            file[d_count++] = pro[i+1];
                             pro[i] = NULL;
-                            break;
                         }
-                        else if(strncmp(pro[i], "<",1) == 0)
+                        else if(strncmp(pro[i], "<",1) == 0 || strncmp(pro[i], ">",1) == 0)
                         {
-                            file = pro[i+1];
+                            d_flag = 2;
+                            file[d_count] = (char*)malloc(strlen(pro[i+1])+1);
+                            file[d_count++] = pro[i+1];
                             pro[i] = NULL;
-                            break;
                         }
+                        file[d_count] = NULL;
                     }
-                    if(!command(pro[0]))
+
+                    if((pid2 = fork()) < 0)
                     {
-                        printf("bash: %s:未找到命令\n", pro[0]);
+                        printf("Error:fork error\n");
+                        exit(-1);
+                    }
+                    if(pid2 == 0)
+                    {
+                        if(din > 0)// 输入重定向<
+                        {
+                            if(!command(pro[0]))
+                            {
+                                printf("bash: %s:未找到命令\n", pro[0]);
+                                exit(0);
+                            }
+                            for(int i=0;i<d_count;i++)
+                            {
+                                if(d_flag == 1)
+                                {
+                                    lseek(fd[i],0,SEEK_END);
+                                }
+                                fd[i] = open(file[i], O_RDONLY);
+                                dup2(fd[i], 0);
+                            }
+                        }
+                        if(dout > 0) // 输出重定向符>
+                        {
+                            if(!command (pro[0]))
+                            {
+                                printf("bash: %s:未找到命令\n", pro[0]);
+                                exit(0);
+                            }
+                            for(int i=0;i<d_count;i++)
+                            {
+                                if(d_flag == 1)
+                                {
+                                    //lseek(fd,0,SEEK_END);
+                                    fd[i] = open(file[i], O_RDWR|O_CREAT|O_APPEND, 0644);
+                                }else{
+                                    fd[i] = open(file[i], O_RDWR|O_CREAT|O_TRUNC, 0644);
+                                }
+                                dup2(fd[i], 1);
+                            }
+                        }
+                        execvp(pro[0],pro);
                         exit(0);
                     }
-                    if(d_flag == 1)
+                    if(waitpid(pid2,&status2, 0) == -1)
                     {
-                        lseek(fd,0,SEEK_END);
+                        printf("wait2 for child process error.\n");
                     }
-                    fd = open(file, O_RDONLY);
-                    dup2(fd, 0);
-                }
-                if(dout > 0) // 输出重定向符>
-                {
-                    int d_flag = 0;
-                    for(int i = 0 ;i < len ;i++)
-                    {
-                        if(strncmp(pro[i], ">>",2) == 0)
-                        {
-                            d_flag = 1;
-                            file = pro[i+1];
-                            pro[i] = NULL;
-                            break;
-                        }
-                        else if(strncmp(pro[i], ">",1) == 0  )
-                        {
-                            file = pro[i+1];
-                            pro[i] = NULL;
-                            break;
-                        }       
-                    }
-                    if(!command (pro[0]))
-                    {
-                        printf("bash: %s:未找到命令\n", pro[0]);
-                        exit(0);
-                    }
-                    if(d_flag == 1)
-                    {
-                        //lseek(fd,0,SEEK_END);
-                        fd = open(file, O_RDWR|O_CREAT|O_APPEND, 0644);
-                    }else{
-                        fd = open(file, O_RDWR|O_CREAT|O_TRUNC, 0644);
-                    }
-                    dup2(fd, 1);
+                    fd2 = open("/tmp/1.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                    close(fd2);
+                    strcpy(pro[1],"/tmp/1.txt");
                 }
                 if(pip_flag > 0)
                 {
@@ -499,8 +561,30 @@ void second_and_mycmd(char** para,int paranum)
                     temp_buf[6] = '\0';
                     if( strcmp(temp_buf,"111111") != 0 )
                     {
-                        fd2 = open("/tmp/temp_shell.txt",O_WRONLY|O_CREAT|O_TRUNC, 0644);
+                        fd2 = open("/tmp/temp_shell.txt",O_RDWR|O_CREAT, 0644);
+                        fd3 = open("/tmp/temp_shell_2.txt",O_RDWR|O_CREAT|O_TRUNC, 0644);
+                        int pid3=0;
+                        if((pid3 = fork())<0)
+                        {
+                            printf("Error:fork error\n");
+                            exit(-1);
+                        }if(pid3 == 0)
+                        {
+                            char *pid_t[20] ={"cp","/tmp/temp_shell.txt","/tmp/temp_shell_2.txt",NULL};
+                            execvp(pid_t[0],pid_t);
+                            exit(0);
+                        }
+                        if(waitpid(pid3,NULL, 0) == -1)
+                        {
+                            printf("wait3 for child process error.\n");
+                        }
+                        close(fd2);
+
+                        fd2 = open("/tmp/temp_shell.txt",O_RDWR|O_CREAT|O_TRUNC, 0644);
+
+
                         dup2(fd2,1);
+                        dup2(fd3,0);
 
                         if(pip == 1)
                         {        
@@ -513,14 +597,27 @@ void second_and_mycmd(char** para,int paranum)
                         dup2(fd2,0);
                     }
                 }
+                //printf("2:\n");
                 execvp(pro[0],pro);
-                fflush(stdout);
                 exit(0);
+
             }
         }
-        //printf("pid:%d ppid:%d\n",getpid(),getppid());
+        //printf("1:pid:%d ppid:%d\n",getpid(),getppid());
 
-        if(back == 1 )
+        for(index;index < paranum;index++)
+        {
+            if(strncmp(para[index],">",1)==0)
+            {
+                dout--;
+            }
+            if(strncmp(para[index],"<",1)==0)
+            {
+                din--;
+            }
+        }
+
+        if(pip==0 && back == 1 )
         {
             printf("[pid] %d \n", pid);
             return ;
@@ -530,7 +627,6 @@ void second_and_mycmd(char** para,int paranum)
         {
             printf("wait for child process error.\n");
         }
-        
 
         if(k <= number)
         {
@@ -554,6 +650,8 @@ void second_and_mycmd(char** para,int paranum)
 
     remove("/tmp/shell_flag.txt");
     remove("/tmp/temp_shell.txt");
+    remove("/tmp/1.txt");
+    remove("/tmp/temp_shell_2.txt");
 
 
     free(buf);
@@ -607,6 +705,7 @@ int command(char *arg)
     return 0;
 }
 
+
 void mycd(char *optiton)
 {
     char *pass;
@@ -646,12 +745,19 @@ void mycd(char *optiton)
         strcpy(address,optiton);
     }
 
+    //printf("%s\n",address);
+
     if(chdir(address))
     {
         fprintf(stderr,"bash: cd:\"%s\": 没有那个文件或目录",optiton);
     }else{
         strcpy(cd_temp,pass);
     }
+    // char *m=NULL;
+    // m = getcwd(NULL,0);
+    // printf("%s\n",m);
+
+    // free(m);
 
 
     //chroot(address);
