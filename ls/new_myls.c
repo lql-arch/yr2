@@ -306,7 +306,7 @@ void my_ls(char* cata)
 
 void R_option(temp_head* list_t,int size)
 {
-    f_temp* p = list_t->start; 
+    f_temp* p = list_t->start;
     char path[PATH_MAX];
     struct stat st_buf;
     list.start = NULL;
@@ -338,7 +338,7 @@ void R_option(temp_head* list_t,int size)
             showFile(p->name);
             if(S_ISDIR(st_buf.st_mode))
             {
-                if(option_a==0 && (strcmp(p->name,".")==0 || strcmp(p->name,"..")==0))
+                if(option_a==0 && p->name[0]=='.')
                 {
                 }else{
                     join_temp(&list,p->name);
@@ -382,6 +382,7 @@ void R_option(temp_head* list_t,int size)
     {
         if(strcmp(R_arr[i],".")==0 || strcmp(R_arr[i],"..")==0)
         {
+            i++;
             continue;
         }
 
