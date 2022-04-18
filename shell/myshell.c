@@ -12,12 +12,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-// file name: " "
-// >> and | again
+// " " and ''
+//   
 //free
 //^C(2)
-
-//cd and >> 
 
 void print_prompt(); 
 void get_user_input(char *buf);
@@ -401,7 +399,7 @@ void second_and_mycmd(char** para,int paranum)
     int status2;
     int d_flag = 0;
     int k=2;
-    int fd2,fd3,fd5;
+    int fd1,fd2,fd3,fd5;
     int fd2_flag = 0;
     int pip_flag = 0;
     if(pip > 0)
@@ -668,7 +666,7 @@ int command(char *arg)
     DIR *d;
     struct dirent *dir;
     char *path[]={"./","/usr/local/bin","/usr/bin","/usr/local/sbin","/usr/bin/site_perl","/usr/bin/vendor_perl","/usr/bin/core_perl","NULL"};
-    //printf("arg:%s\n",arg);
+    //can : echo $PATH;
 
     if( strncmp(arg, "./", 2) == 0 )
     {
