@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -16,6 +19,7 @@ typedef struct SPS{
 
 typedef struct SPSCQueue{
     struct SPS *last,*first;
+    pthread_rwlock_t lock;
 }SPSCQueue;
 
 SPSCQueue *SPSCQueueInit(int threadNumber);
@@ -26,6 +30,7 @@ void SPSCQueueDestory(SPSCQueue *sps);
 
 struct MPMCQueue {
     struct MPM *last,*first;
+    pthread_rwlock_t lock;
 } typedef MPMCQueue;
 
 typedef struct MPM{
