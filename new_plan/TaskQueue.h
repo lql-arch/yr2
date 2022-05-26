@@ -19,10 +19,11 @@ typedef struct SPS{
 
 typedef struct SPSCQueue{
     struct SPS *last,*first;
-    pthread_rwlock_t lock;
+    int alloc;
+    int size;
 }SPSCQueue;
 
-SPSCQueue *SPSCQueueInit(int threadNumber);
+SPSCQueue *SPSCQueueInit(int alloc);
 void SPSCQueuePush(SPSCQueue *pool, void *s);
 void *SPSCQueuePop(SPSCQueue *pool);
 void SPSCQueueDestory(SPSCQueue *sps);
@@ -30,7 +31,7 @@ void SPSCQueueDestory(SPSCQueue *sps);
 
 struct MPMCQueue {
     struct MPM *last,*first;
-    pthread_rwlock_t lock;
+    int alloc;
 } typedef MPMCQueue;
 
 typedef struct MPM{
@@ -38,7 +39,7 @@ typedef struct MPM{
     struct MPM *next,*prve;
 }MPM;
 
-MPMCQueue *MPMCQueueInit(int threadNumber);
+MPMCQueue *MPMCQueueInit(int alloc);
 void MPMCQueuePush(MPMCQueue *pool, void *s);
 void *MPMCQueuePop(MPMCQueue *pool);
 void MPMCQueueDestory(MPMCQueue *mpm);
