@@ -1,0 +1,3 @@
+/home/bronya/vs/yr2/project/TTMS(C Lang)/cmake-build-debug/CMakeFiles/TTMS_C_Lang_.dir
+/home/bronya/vs/yr2/project/TTMS(C Lang)/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/bronya/vs/yr2/project/TTMS(C Lang)/cmake-build-debug/CMakeFiles/rebuild_cache.dir
