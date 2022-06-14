@@ -13,11 +13,11 @@
 
 #include "../View/Studio_UI.h"
 
-#include "../View/Paly_UI.h"
-
+#include "../View/Play_UI.h"
 void Main_Menu(void) {
 	char choice;
-	do { 
+	do {
+        char ch;
 		printf("\n==================================================================\n");
 		printf("**************** Theater Ticket Management System ****************\n");
 		printf("[S]tudio Management.\n");
@@ -30,10 +30,10 @@ void Main_Menu(void) {
 		printf("[E]xist.\n");
 		printf("\n==================================================================\n");
 		printf("Please input your choice:");
-		fflush(stdin);
+		//fflush(stdin);
 		choice = getchar();
-        char ch;
         while((ch = getchar()) != '\n'){}
+
 		switch (choice) {
 		case 'S':
 		case 's':

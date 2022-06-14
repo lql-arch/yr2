@@ -31,5 +31,16 @@ add_executable(TTMS_C_Lang_
         src/View/Studio_UI.c
         src/View/Studio_UI.h
         src/TTMS.c
-        src/View/Paly_UI.h
-        src/View/Play_UI.c)
+        src/View/Schedule_UI.h
+        src/View/Schedule_UI.c
+        src/Service/Play.h
+        src/Service/Play.c
+        src/Persistence/Play_Perst.h
+        src/Persistence/Play_Perst.c
+        src/Service/Schedule.c
+        src/Service/Schedule.h
+        src/View/Play_UI.c
+        src/View/Play_UI.h
+        src/Persistence/Schedule_Persist.c
+        src/Persistence/Schedule_Persist.h
+        )
