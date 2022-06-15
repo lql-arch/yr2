@@ -14,7 +14,6 @@
 #ifdef linux
 	#include <sys/io.h>
 #endif
-
 #ifdef WIN32
 	#include <io.h>
 #endif

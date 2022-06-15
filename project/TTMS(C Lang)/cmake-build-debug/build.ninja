@@ -168,6 +168,27 @@ build CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Schedule_Persist.c.o: C_COMPIL
   OBJECT_DIR = CMakeFiles/TTMS_C_Lang_.dir
   OBJECT_FILE_DIR = CMakeFiles/TTMS_C_Lang_.dir/src/Persistence
 
+build CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Creat_Ticket_Persist.c.o: C_COMPILER__TTMS_C_Lang__Debug /home/bronya/vs/yr2/project/TTMS(C$ Lang)/src/Persistence/Creat_Ticket_Persist.c || cmake_object_order_depends_target_TTMS_C_Lang_
+  DEP_FILE = CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Creat_Ticket_Persist.c.o.d
+  FLAGS = -g -std=gnu11
+  INCLUDES = -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Common" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Persistence" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Service" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/View"
+  OBJECT_DIR = CMakeFiles/TTMS_C_Lang_.dir
+  OBJECT_FILE_DIR = CMakeFiles/TTMS_C_Lang_.dir/src/Persistence
+
+build CMakeFiles/TTMS_C_Lang_.dir/src/Service/Creat_Ticket.c.o: C_COMPILER__TTMS_C_Lang__Debug /home/bronya/vs/yr2/project/TTMS(C$ Lang)/src/Service/Creat_Ticket.c || cmake_object_order_depends_target_TTMS_C_Lang_
+  DEP_FILE = CMakeFiles/TTMS_C_Lang_.dir/src/Service/Creat_Ticket.c.o.d
+  FLAGS = -g -std=gnu11
+  INCLUDES = -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Common" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Persistence" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Service" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/View"
+  OBJECT_DIR = CMakeFiles/TTMS_C_Lang_.dir
+  OBJECT_FILE_DIR = CMakeFiles/TTMS_C_Lang_.dir/src/Service
+
+build CMakeFiles/TTMS_C_Lang_.dir/src/View/Creat_Ticket_UI.c.o: C_COMPILER__TTMS_C_Lang__Debug /home/bronya/vs/yr2/project/TTMS(C$ Lang)/src/View/Creat_Ticket_UI.c || cmake_object_order_depends_target_TTMS_C_Lang_
+  DEP_FILE = CMakeFiles/TTMS_C_Lang_.dir/src/View/Creat_Ticket_UI.c.o.d
+  FLAGS = -g -std=gnu11
+  INCLUDES = -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Common" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Persistence" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/Service" -I"/home/bronya/vs/yr2/project/TTMS(C Lang)/src/View"
+  OBJECT_DIR = CMakeFiles/TTMS_C_Lang_.dir
+  OBJECT_FILE_DIR = CMakeFiles/TTMS_C_Lang_.dir/src/View
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target TTMS_C_Lang_
@@ -176,7 +197,7 @@ build CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Schedule_Persist.c.o: C_COMPIL
 #############################################
 # Link the executable TTMS_C_Lang_
 
-build TTMS_C_Lang_: C_EXECUTABLE_LINKER__TTMS_C_Lang__Debug CMakeFiles/TTMS_C_Lang_.dir/src/Common/common.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Common/listTestDrv.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/EntityKey_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Seat_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Studio_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Seat.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Studio.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Main_Menu.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Seat_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Studio_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/TTMS.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Schedule_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Play.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Play_Perst.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Schedule.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Play_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Schedule_Persist.c.o
+build TTMS_C_Lang_: C_EXECUTABLE_LINKER__TTMS_C_Lang__Debug CMakeFiles/TTMS_C_Lang_.dir/src/Common/common.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Common/listTestDrv.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/EntityKey_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Seat_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Studio_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Seat.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Studio.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Main_Menu.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Seat_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Studio_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/TTMS.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Schedule_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Play.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Play_Perst.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Schedule.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Play_UI.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Schedule_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Persistence/Creat_Ticket_Persist.c.o CMakeFiles/TTMS_C_Lang_.dir/src/Service/Creat_Ticket.c.o CMakeFiles/TTMS_C_Lang_.dir/src/View/Creat_Ticket_UI.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/TTMS_C_Lang_.dir
   POST_BUILD = :

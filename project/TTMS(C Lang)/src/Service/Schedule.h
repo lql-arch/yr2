@@ -5,6 +5,8 @@
 #ifndef TTMS_C_LANG__SCHEDULE_H
 #define TTMS_C_LANG__SCHEDULE_H
 
+#include "List.h"
+
 typedef struct {
     int  hour;
     int minute;
@@ -28,17 +30,19 @@ typedef struct schedule_node {
 
 
 //根据剧目id获取演出计划
-int Schedule_Srv_FetchByPlay();
+int Schedule_Srv_FetchByPlay(int id,schedule_t *buf);
 
 //添加新演出计划服务
-int Schedule_Srv_Add();
+int Schedule_Srv_Add(schedule_t *p);
 
 //修改演出计划服务
-int Schedule_Srv_Modify();
+int Schedule_Srv_Modify(schedule_t *data);
 
 //根据id删除演出计划服务
-int Schedule_srv_DeleteByID();
+int Schedule_srv_DeleteByID(int id);
 
+int Schedule_SetOffset(int id, Pagination_t *ptr);
 
+int Schedule_Srv_FetchAll(schedule_list_t head);
 
 #endif //TTMS_C_LANG__SCHEDULE_PERSIST_H

@@ -43,4 +43,4 @@ add_executable(TTMS_C_Lang_
         src/View/Play_UI.h
         src/Persistence/Schedule_Persist.c
         src/Persistence/Schedule_Persist.h
-        )
+        src/Persistence/Creat_Ticket_Persist.c src/Persistence/Creat_Ticket_Persist.h src/Service/Creat_Ticket.c src/Service/Creat_Ticket.h src/View/Creat_Ticket_UI.c src/View/Creat_Ticket_UI.h)

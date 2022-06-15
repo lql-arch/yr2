@@ -5,6 +5,8 @@
 #ifndef TTMS_C_LANG__PLAY_H
 #define TTMS_C_LANG__PLAY_H
 
+#include "List.h"
+
 //剧目类型
 typedef enum{
     PLAY_TYPE_FILE = 1,
@@ -45,18 +47,21 @@ typedef struct play_node{
 }play_node_t,*play_list_t;
 
 //获取全部剧目服务
-int Play_Srv_FetchAll();
+int Play_Srv_FetchAll(play_list_t list);
 
 //添加新剧目服务
 int Play_Srv_Add(play_t *date);
 
 //修改剧目服务
-void Play_Srv_Modify();
+int Play_Srv_Modify(play_t *t);
 
 //根据id删除剧目服务
-void Play_Srv_Deleteify();
+int Play_Srv_Deleteify(int id);
 
 //根据id获取剧目服务
-void Play_Srv_FetchBYID();
+int Play_Srv_FetchByID(int id,play_t *date);
+
+//修改偏移量
+int Play_SetOffset(int id,Pagination_t *paging);
 
 #endif //TTMS_C_LANG__PLAY_H

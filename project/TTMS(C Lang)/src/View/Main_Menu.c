@@ -10,14 +10,22 @@
 #include "../View/Main_Menu.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../View/Studio_UI.h"
 
 #include "../View/Play_UI.h"
 void Main_Menu(void) {
 	char choice;
+    char ch;
 	do {
-        char ch;
+    #ifdef linux
+            system("clear");
+    #endif
+    #ifdef WIN32
+            system("cls");
+    #endif
+
 		printf("\n==================================================================\n");
 		printf("**************** Theater Ticket Management System ****************\n");
 		printf("[S]tudio Management.\n");
@@ -30,9 +38,10 @@ void Main_Menu(void) {
 		printf("[E]xist.\n");
 		printf("\n==================================================================\n");
 		printf("Please input your choice:");
-		//fflush(stdin);
+		fflush(stdin);
 		choice = getchar();
-        while((ch = getchar()) != '\n'){}
+        while((ch = getchar()) != '\n')
+            continue;
 
 		switch (choice) {
 		case 'S':

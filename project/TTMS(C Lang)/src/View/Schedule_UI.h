@@ -11,10 +11,10 @@ void Schedule_UI_MgtEntry(int argc);
 int Schedule_UI_Add();
 
 //修改演出计划界面
-void Schedule_UI_Modify();
+int  Schedule_UI_Modify(int id);
 
 //删除演出计划界面
-void Schedule_UI_Delete();
+int Schedule_UI_Delete(int id);
 
 //生成演出票界面
 //void Ticket_UI_MgtEntry();

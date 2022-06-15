@@ -11,9 +11,9 @@
 #include<unistd.h>
 #include <assert.h>
 
-static const char PLAY_DATA_FILE[] = "Play.dat";//演出计划文件名常量
-static const char PLAY_DATA_TEMP_FILE[] = "PlayTmp.dat"; //演出计划临时文件名常量
-static const char PLAY_KEY_NAME[] = "Play"; //演出计划名常量
+static const char PLAY_DATA_FILE[] = "Play.dat";//剧目文件名常量
+static const char PLAY_DATA_TEMP_FILE[] = "PlayTmp.dat"; //剧目临时文件名常量
+static const char PLAY_KEY_NAME[] = "Play"; //剧目名常量
 
 
 int Play_Perst_SelectAll(play_list_t  list){
@@ -43,6 +43,7 @@ int Play_Perst_SelectAll(play_list_t  list){
             recCount++;
         }
     }
+
     fclose(fp);
     return recCount;
 }
@@ -68,14 +69,137 @@ int Play_Perst_Insert(play_t* date){
     return rtn;
 }
 
-void Play_perst_Update(){
+int Play_perst_Update(play_t *play){
+    FILE *fp;
+    play_t buf;
+    int flag = 0;
 
+    if((fp = fopen(PLAY_DATA_FILE,"rb+")) == NULL){
+        fprintf(stderr,"Cannot open file %s\n",PLAY_DATA_FILE);
+        return 0;
+    }
+
+    while(!feof(fp)){
+        if(fread(&buf, sizeof(play_t), 1, fp)){
+            if(buf.id == play->id){
+                fseek(fp,-(int)sizeof(play_t),SEEK_CUR);
+                fwrite(play, sizeof(play_t), 1, fp);
+                flag = 1;
+                break;
+            }
+        }
+    }
+
+    fclose(fp);
+
+    if(flag == 0) {
+        char choice;
+        fprintf(stderr,"Warning:file no exist.\n"
+                       "Whether it needs to be added(y/n):");
+        scanf("%c",&choice);
+        if(choice == 'y' || choice == 'Y') {
+            Play_Perst_Insert(play);
+            flag = 1;
+        }
+        while((choice = getchar()) != '\n')
+            continue;
+    }
+
+    return flag;
 }
 
-void Play_Perst_RemByID(){
+int Play_Perst_RemByID(int id){
+    //将原始文件重命名，然后读取数据重新写入到数据文件中，并将要删除的实体过滤掉。
 
+    //对原始数据文件重命名
+    if(rename(PLAY_DATA_FILE, PLAY_DATA_TEMP_FILE)<0){
+        printf("Cannot open file %s!\n", PLAY_DATA_FILE);
+        return 0;
+    }
+
+    FILE *fpSour, *fpTarg;
+    fpSour = fopen(PLAY_DATA_TEMP_FILE, "rb");
+    if (NULL == fpSour ){
+        printf("Cannot open file %s!\n", PLAY_DATA_TEMP_FILE);
+        return 0;
+    }
+
+    fpTarg = fopen(PLAY_DATA_FILE, "wb");
+    if ( NULL == fpTarg ) {
+        printf("Cannot open file %s!\n", PLAY_DATA_FILE);
+        return 0;
+    }
+
+
+    play_t buf;
+
+    int found = 0;
+    while (!feof(fpSour)) {
+        if (fread(&buf, sizeof(play_t), 1, fpSour)) {
+            if (id == buf.id) {
+                found = 1;
+                continue;
+            }
+            fwrite(&buf, sizeof(play_t), 1, fpTarg);
+        }
+    }
+
+    fclose(fpTarg);
+    fclose(fpSour);
+
+    //删除临时文件
+    remove(PLAY_DATA_TEMP_FILE);
+    return found;
 }
 
-void Play_Perst_SelectBYID(){
+int Play_Perst_SelectByID(int id,play_t *date){
+    FILE *fp;
+    play_t buf;
+    int flag = 0;
 
+    if((fp = fopen(PLAY_DATA_FILE,"rb+")) == NULL){
+        fprintf(stderr,"Cannot open file %s\n",PLAY_DATA_FILE);
+        return 0;
+    }
+
+    while(!feof(fp)){
+        if(fread(&buf, sizeof(play_t), 1, fp)){
+            if(buf.id == id){
+                fseek(fp,-(int)sizeof(play_t),SEEK_CUR);
+                fread(date, sizeof(play_t), 1, fp);
+                flag = 1;
+                break;
+            }
+        }
+    }
+    fclose(fp);
+
+    return flag;
+}
+
+int Play_Perst_SetOffset(int id, Pagination_t *paging){
+    FILE *fp;
+    play_t buf;
+    int flag = 0;
+    paging->offset = 0;
+
+
+    if((fp = fopen(PLAY_DATA_FILE,"rb+")) == NULL){
+        fprintf(stderr,"Cannot open file %s\n",PLAY_DATA_FILE);
+        return 0;
+    }
+
+    while(!feof(fp)){
+        if(fread(&buf, sizeof(play_t), 1, fp)){
+            paging->offset++;
+            if(buf.id == id){
+                flag = 1;
+                break;
+            }
+        }
+    }
+
+    fclose(fp);
+
+    return 1;
 }

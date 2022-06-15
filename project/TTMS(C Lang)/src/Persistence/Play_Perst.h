@@ -14,13 +14,15 @@ int Play_Perst_SelectAll(play_list_t date);
 int Play_Perst_Insert(play_t *date);
 
 //更新剧目
-void Play_perst_Update();
+int Play_perst_Update(play_t *t);
 
 //根据id去除剧目
-void Play_Perst_RemByID();
+int Play_Perst_RemByID(int id);
 
 //根据id载入剧目
-void Play_Perst_SelectBYID();
+int Play_Perst_SelectByID(int id,play_t *date);
+
+int Play_Perst_SetOffset(int id, Pagination_t *paging);
 
 //void EntKey_Perst_GetNewKeys();
 
