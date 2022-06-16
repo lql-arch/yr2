@@ -37,6 +37,6 @@ int Ticket_Srv_GenBatch(int schedule_id);
 //根据id删除票信息
 int Ticket_Srv_DeleteBatch(int schedule_id);
 
-int Ticket_Srv_FetchAll(ticket_list_t list);
+//int Ticket_Srv_FetchAll(ticket_list_t list);
 
 #endif //TTMS_C_LANG__CREAT_TICKET_H

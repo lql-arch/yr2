@@ -4,119 +4,109 @@
 
 #include "Creat_Ticket_UI.h"
 #include "Creat_Ticket.h"
+#include "Play.h"
 #include <stdio.h>
 
-void Tick_UI_MgrEntry(int schedule_id){
-    int i,id;
+int Tick_UI_MgrEntry(int schedule_id){
+    schedule_t rec;
+    play_t rec2;
     char choice;
     char ch;
 
-    ticket_list_t head;
-    ticket_node_t *pos;
-    Pagination_t paging;
 
-    List_Init(head, ticket_node_t);
-    paging.offset = 0;
-    paging.pageSize = 5;
-
-    //载入数据
-    //未完成：不同多个数据
-    paging.totalRecords = Ticket_Srv_FetchAll(head);
-    Paging_Locate_FirstPage(head, paging);
+    if (! Schedule_Srv_FetchByID(schedule_id,&rec)) {
+        printf("The schedule does not exist!\nPress [Enter] key to return\n");
+        setbuf(stdin,NULL);
+        getchar();
+        return 0;
+    }
 
 
-    do {
+    if (!Play_Srv_FetchByID(rec.play_id, &rec2)) {
+        printf("The repertoire does not exist!\nPress [Enter] key to return\n");
+        setbuf(stdin,NULL);
+        getchar();
+        return 0;
+    }
+
     #ifdef linux
-            system("clear");
+        system("clear");
     #endif
     #ifdef WIN32
-            system("cls");
+        system("cls");
     #endif
 
-        printf(
-                "\n==================================================================\n");
-        printf(
-                "*********************** %dth Schedule List *****************************\n",schedule_id);
-        printf("%5s  %8s  %8s  %6s  %5s  \n", "ID", "schedule_id", "seat_id",
-               "price", "status");
-        printf(
-                "------------------------------------------------------------------\n");
-        //显示数据
-        Paging_ViewPage_ForEach(head, paging, schedule_node_t, pos, i){
-            printf("%5d  %8d  %8d  %6d  %5d\n", pos->data.id,pos->data.schedule_id,pos->data.seat_id,
-                   pos->data.price,pos->data.status);
-        }
+    printf(
+            "\n============================================================================\n");
+    printf(
+            "*********************** Show program information *****************************\n",schedule_id);
+    printf("%8s %8s  %8s  %10s  %8s %8s\n", "schedule_ID", "play_ID", "studio_ID",
+           "date", "time","seat_count");
+    printf(
+            "-------------------------------------------------------------------------------\n");
+    //显示数据
+    printf("%8d %8d  %8d  %04d-%02d-%02d  %02d-%02d-%02d %8d \n",rec.id,
+       rec.play_id, rec.studio_id, rec.date.hour,
+       rec.date.minute,rec.date.second,rec.time.hour,
+       rec.time.minute,rec.time.second,rec.seat_count);
+    printf("\n==============================================================================\n");
 
+    printf("********************************** The Play information ***************************************************\n");
+    printf("%5s  %20s  %10s  %5s  %10s  %10s  %10s  %10s  %6s\n", "ID", "Name", "type",
+       "area", "rating","duration","start_date","end_date","price");
+    printf("---------------------------------------------------------------------------------------------------------\n");
+    //显示数据
+    printf("%5d  %20s  %10u  %5s  %10u  %10d  %4d-%2d-%2d  %4d-%2d-%2d  %6d\n", rec2.id,
+           rec2.name, rec2.type, rec2.area,rec2.rating,rec2.duration,
+           rec2.start_date.year,rec2.start_date.month,rec2.start_date.day,
+           rec2.end_date.year,rec2.start_date.month,rec2.start_date.day,rec2.price);
+    printf("\n==========================================================================================================\n");
+    printf("type: [1/file] [2/opera] [3/concert]           rating: [1/child] [2/teenage] [3/adult]");
+    printf("\n==========================================================================================================\n");
+
+    do {
+        printf("**********************************************************************************************************\n");
         printf(
-                "------- Total Records:%2d ----------------------- Page %2d/%2d ----\n",
-                paging.totalRecords, Pageing_CurPage(paging),
-                Pageing_TotalPages(paging));
+                "[G]Generate tickets for the show　　|　　r[E]generate the ticket 　　|　　 [R]return\n");
         printf(
-                "******************************************************************\n");
-        printf(
-                "[P]revPage|[N]extPage | [A]dd|[D]elete | [U]pdate | [S]eat | [T]icket_creating | [R]eturn");
-        printf(
-                "\n==================================================================\n");
+                "==========================================================================================================\n");
+
+
         printf("Your Choice:");
         fflush(stdin);
-        scanf("%c", &choice);
-        while((ch = getchar()) != '\n'){}
+        scanf("%s", &choice);
+        while ((ch = getchar()) != '\n') {}
         fflush(stdin);
 
         switch (choice) {
-//            case 'a':
-//            case 'A':
-//                if (Schedule_UI_Add()) //新添加成功，跳到最后一页显示
-//                {
-//                    paging.totalRecords = Schedule_Srv_FetchAll(head);
-//                    Paging_Locate_LastPage(head, paging, schedule_node_t);
-//                }
-//                break;
-//            case 'd':
-//            case 'D':
-//                printf("Input the ID:");
-//                scanf("%d", &id);
-//                if (Schedule_UI_Delete(id)) {	//从新载入数据
-//                    paging.totalRecords = Schedule_Srv_FetchAll(head);
-//                    List_Paging(head, paging, schedule_node_t);
-//                }
-//                break;
-//            case 'u':
-//            case 'U':
-//                printf("Input the ID:");
-//                scanf("%d", &id);
-//                if (Schedule_UI_Modify(id)) {	//从新载入数据
-//                    paging.totalRecords = Schedule_Srv_FetchAll(head);
-//                    List_Paging(head, paging, schedule_node_t);
-//                }
-//                break;
-//            case 's':
-//            case 'S':
-//                printf("Input the ID:");
-//                scanf("%d", &id);
-//                while((ch = getchar()) != '\n')
-//                    continue;
-//                if(Schedule_SetOffset(id,&paging)){
-//                    paging.totalRecords = Schedule_Srv_FetchAll(head);
-//                    List_Paging(head, paging, schedule_node_t);
-//                }
-//                paging.totalRecords = Schedule_Srv_FetchAll(head);
-//                List_Paging(head, paging, schedule_node_t);
-//                break;
-            case 'p':
-            case 'P':
-                if (!Pageing_IsFirstPage(paging)) {
-                    Paging_Locate_OffsetPage(head, paging, -1, schedule_node_t);
+            case 'g':
+            case 'G':
+                if(Ticket_Srv_GenBatch(schedule_id)){
+                    printf("Succeed:Generate tickets for the show.\n");
+                }else{
+                    printf("Failed:Generate tickets for the show.\n");
                 }
                 break;
-            case 'n':
-            case 'N':
-                if (!Pageing_IsLastPage(paging)) {
-                    Paging_Locate_OffsetPage(head, paging, 1, schedule_node_t);
+            case 'e':
+            case 'E':
+                if(Ticket_Srv_DeleteBatch(schedule_id)){
+                    printf("Succeed:regenerate the ticket.\n");
+                }else{
+                    printf("Failed:regenerate the ticket.\n");
                 }
+                break;
+            case 'r':
+            case 'R':
+                break;
+            default:
+                fprintf(stderr,"Error:Input error.\n");
                 break;
         }
-    } while (choice != 'r' && choice != 'R');
-    //释放链表空间
-    List_Destroy(head, schedule_node_t);
+    }while(choice != 'r' && choice != 'R');
+
+
+    setbuf(stdin,NULL);
+
+    return 0;
+
 }

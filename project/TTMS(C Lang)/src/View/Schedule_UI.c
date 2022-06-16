@@ -6,12 +6,19 @@
 #include "../Service/Schedule.h"
 #include "../Common/List.h"
 #include "Creat_Ticket_UI.h"
+#include "Schedule_Persist.h"
+#include "Creat_Ticket.h"
+#include "Creat_Ticket_Persist.h"
 #include <stdio.h>
+#include <string.h>
 
-void Schedule_UI_MgtEntry(int argc){
+
+
+void Schedule_UI_MgtEntry(int play_id){
     int i,id;
     char choice;
     char ch;
+    Create_File_Name((char)play_id);
 
     schedule_list_t head;
     schedule_node_t *pos;
@@ -22,7 +29,6 @@ void Schedule_UI_MgtEntry(int argc){
     paging.pageSize = 5;
 
     //载入数据
-    //未完成：不同多个数据
     paging.totalRecords = Schedule_Srv_FetchAll(head);
     Paging_Locate_FirstPage(head, paging);
 
@@ -38,15 +44,15 @@ void Schedule_UI_MgtEntry(int argc){
         printf(
                 "\n==================================================================\n");
         printf(
-                "*********************** %dth Play  List *****************************\n",argc);
-        printf("%5s  %8s  %10s  %10s  %8s  %5s\n", "ID", "play_id", "studio_id",
+                "*********************** %dth Play  List *****************************\n",play_id);
+        printf("%8s  %5s  %10s  %10s  %8s  %5s\n", "play_id", "ID", "studio_id",
                "time", "date","seat_count");
         printf(
                 "------------------------------------------------------------------\n");
         //显示数据
         Paging_ViewPage_ForEach(head, paging, schedule_node_t, pos, i){
-            printf("%5d  %8d  %10d  %04d-%02d-%02d  %02d-%02d-%02d  %5d\n", pos->date.id,pos->date.play_id,pos->date.studio_id,
-                   pos->date.date.hour,pos->date.date.minute,pos->date.date.second,pos->date.time.hour,pos->date.time.minute,pos->date.time.second, pos->date.seat_count);
+            printf("%8d  %5d  %10d  %04d-%02d-%02d  %02d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
+                   pos->date.time.hour,pos->date.time.minute,pos->date.time.second,pos->date.date.hour,pos->date.date.minute,pos->date.date.second, pos->date.seat_count);
         }
 
         printf(
@@ -68,7 +74,7 @@ void Schedule_UI_MgtEntry(int argc){
         switch (choice) {
             case 'a':
             case 'A':
-                if (Schedule_UI_Add()) //新添加成功，跳到最后一页显示
+                if (Schedule_UI_Add(play_id)) //新添加成功，跳到最后一页显示
                 {
                     paging.totalRecords = Schedule_Srv_FetchAll(head);
                     Paging_Locate_LastPage(head, paging, schedule_node_t);
@@ -78,6 +84,7 @@ void Schedule_UI_MgtEntry(int argc){
             case 'D':
                 printf("Input the ID:");
                 scanf("%d", &id);
+                while ((ch = getchar()) != '\n') {}
                 if (Schedule_UI_Delete(id)) {	//从新载入数据
                     paging.totalRecords = Schedule_Srv_FetchAll(head);
                     List_Paging(head, paging, schedule_node_t);
@@ -87,6 +94,7 @@ void Schedule_UI_MgtEntry(int argc){
             case 'U':
                 printf("Input the ID:");
                 scanf("%d", &id);
+                while ((ch = getchar()) != '\n') {}
                 if (Schedule_UI_Modify(id)) {	//从新载入数据
                     paging.totalRecords = Schedule_Srv_FetchAll(head);
                     List_Paging(head, paging, schedule_node_t);
@@ -96,8 +104,7 @@ void Schedule_UI_MgtEntry(int argc){
             case 'S':
                 printf("Input the ID:");
                 scanf("%d", &id);
-                while((ch = getchar()) != '\n')
-                    continue;
+                while ((ch = getchar()) != '\n') {}
                 if(Schedule_SetOffset(id,&paging)){
                     paging.totalRecords = Schedule_Srv_FetchAll(head);
                     List_Paging(head, paging, schedule_node_t);
@@ -131,7 +138,7 @@ void Schedule_UI_MgtEntry(int argc){
     List_Destroy(head, schedule_node_t);
 }
 
-int Schedule_UI_Add(){
+int Schedule_UI_Add(int play_id){
     int NewCount;
     schedule_t t;
     char choice;
@@ -146,8 +153,6 @@ int Schedule_UI_Add(){
         printf("\n===============================================================\n");
         printf("********************  Add New Schedule Of Plan ****************\n");
         printf("---------------------------------------------------------------\n");
-        printf("Play Name:");
-        scanf("%d", &(t.play_id));
         printf("Projection Room:");
         scanf("%d", &(t.studio_id));
         printf("Date of screening(year-month-second):");
@@ -156,6 +161,7 @@ int Schedule_UI_Add(){
         scanf("%d-%d-%d",&t.time.hour,&t.time.minute,&t.time.second);
         printf("Number of seat:");
         scanf("%d",&t.seat_count);
+        t.play_id = play_id;
         printf("=================================================================\n");
 
         if (Schedule_Srv_Add(&t)) {
@@ -174,15 +180,18 @@ int Schedule_UI_Add(){
 
 int Schedule_UI_Modify(int id){
     schedule_t t;
+    int play_id ;
     int rtn = 0;
 
     /*Load record*/
-    if (!Schedule_Srv_FetchByPlay(id, &t)) {
+    if (!Schedule_Srv_FetchByID(id, &t)) {
         printf("The play does not exist!\n"
                "Press [Enter] key to return!\n");
         getchar();
         return 0;
     }
+
+    play_id = t.play_id;
 
     #ifdef linux
         system("clear");
@@ -196,7 +205,6 @@ int Schedule_UI_Modify(int id){
     printf("-------------------------------------------------------\n");
     printf("Schedule ID:%d\n", t.id);
     printf("Play_id[%d]:", t.play_id);
-    fflush(stdin);
     scanf("%d",&t.play_id);
     printf("studio_id[%d]:",t.studio_id);
     scanf("%d", &(t.studio_id));
@@ -208,7 +216,7 @@ int Schedule_UI_Modify(int id){
     scanf("%d",&t.seat_count);
     printf("=======================================================\n");
 
-    if (Schedule_Srv_Modify(&t)) {
+    if (Schedule_Srv_Modify(&t, play_id)) {
         rtn = 1;
         printf("The play data updated successfully!\nPress [Enter] key to return!\n");
     } else

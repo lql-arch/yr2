@@ -5,6 +5,8 @@
 #ifndef TTMS_C_LANG__PLAY_UI_H
 #define TTMS_C_LANG__PLAY_UI_H
 
+#include "List.h"
+
 //管理剧目界面
 void Play_UI_MgtEntry(int argc);
 
@@ -18,7 +20,7 @@ int Play_UI_Modify(int id);
 int Play_UI_Delete(int id);
 
 //查询剧目界面
-//void Play_UI_Query();
+int Play_UI_Query(int id,Pagination_t *paging);
 
 
 #endif //TTMS_C_LANG__PLAY_UI_H

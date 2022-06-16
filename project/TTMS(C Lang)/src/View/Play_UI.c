@@ -102,7 +102,7 @@ void Play_UI_MgtEntry(int argc){
                 scanf("%d", &id);
                 while((ch = getchar()) != '\n')
                     continue;
-                if(Play_SetOffset(id,&paging)){
+                if(Play_UI_Query(id,&paging)){
                     paging.totalRecords = Play_Srv_FetchAll(head);
                     List_Paging(head, paging, play_node_t);
                 }
@@ -253,6 +253,6 @@ int Play_UI_Delete(int id){
     return rtn;
 }
 
-//void Play_UI_Query(){
-//
-//}
+int Play_UI_Query(int id, Pagination_t *paging){
+    return Play_SetOffset(id,paging);
+}

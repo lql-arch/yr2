@@ -7,12 +7,14 @@
 
 #include "Schedule.h"
 #include "Creat_Ticket.h"
+#include "Seat.h"
+
 
 //根据id载入演出计划
 int Schedule_Perst_SelectByID(int id , schedule_t *buf);
 
 //存储演出票
-int Ticket_Perst_Insert(ticket_list_t list);
+int Ticket_Perst_Insert(int schedule_id);
 
 //根据id去除演出票
 int Ticket_Perst_Rem(int schedule_id);
