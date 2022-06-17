@@ -4,6 +4,7 @@
 
 #include "Play_UI.h"
 
+static const int PLAY_PAGE_SIZE = 5;
 
 void Play_UI_MgtEntry(int argc){
     int i, id;
@@ -17,7 +18,7 @@ void Play_UI_MgtEntry(int argc){
 
     List_Init(head, play_node_t);
     paging.offset = 0;
-    paging.pageSize = 5;
+    paging.pageSize = PLAY_PAGE_SIZE;
 
     //‘ÿ»Î ˝æ›
     paging.totalRecords = Play_Srv_FetchAll(head);

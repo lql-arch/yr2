@@ -5,7 +5,15 @@
 #ifndef TTMS_C_LANG__PLAY_PERST_H
 #define TTMS_C_LANG__PLAY_PERST_H
 
+
 #include "../Service/Play.h"
+#include "EntityKey_Persist.h"
+#include "../Common/List.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include<unistd.h>
+#include <assert.h>
+#include "../View/Play_UI.h"
 
 //载入全部剧目
 int Play_Perst_SelectAll(play_list_t date);

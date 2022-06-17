@@ -17,17 +17,17 @@ static const char SCHEDULE_KEY_NAME[] = "Schedule"; //演出计划名
 static const char SCHEDULE_DATA_FILE[] = "Schedule.dat";//演出计划文件名
 static const char SCHEDULE_DATA_TEMP_FILE[] = "ScheduleTmp.dat"; //演出计划临时文件名常量
 
+static const SCHEDULE_PAGE_SIZE = 5;
 
 //static char SCHEDULE_KEY_NAME[24]; //演出计划名
 //static char SCHEDULE_DATA_FILE[24];//演出计划文件名
 //static char SCHEDULE_DATA_TEMP_FILE[] = "ScheduleTmp.dat"; //演出计划临时文件名常量
-
-void Create_File_Name(char play_id){
-    strcpy(SCHEDULE_DATA_FILE,"Schedule");
-    strcat(SCHEDULE_DATA_FILE,&play_id);
-    strcpy(SCHEDULE_KEY_NAME,SCHEDULE_DATA_FILE);
-    strcat(SCHEDULE_DATA_FILE,".dat");
-}
+//void Create_File_Name(char play_id){
+//    strcpy(SCHEDULE_DATA_FILE,"Schedule");
+//    strcat(SCHEDULE_DATA_FILE,&play_id);
+//    strcpy(SCHEDULE_KEY_NAME,SCHEDULE_DATA_FILE);
+//    strcat(SCHEDULE_DATA_FILE,".dat");
+//}
 
 //功能：根据ID载入演出计划
 int Schedule_Perst_SelectByID(int id , schedule_t *buf){
@@ -226,6 +226,7 @@ int Schedule_Persist_SetOffset(int id, Pagination_t *ptr){
     schedule_t buf;
     int flag = 0;
     ptr->offset = 0;
+    int count= 0;
 
 
     if((fp = fopen(SCHEDULE_DATA_FILE,"rb+")) == NULL){
@@ -235,7 +236,11 @@ int Schedule_Persist_SetOffset(int id, Pagination_t *ptr){
 
     while(!feof(fp)){
         if(fread(&buf, sizeof(schedule_t), 1, fp)){
-            ptr->offset++;
+            count++;
+            if(count == SCHEDULE_PAGE_SIZE + 1){
+                count = 0;
+                ptr->offset++;
+            }
             if(buf.id == id){
                 flag = 1;
                 break;

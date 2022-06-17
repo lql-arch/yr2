@@ -3,18 +3,13 @@
 //
 
 #include "Play_Perst.h"
-#include "../Service/Play.h"
-#include "EntityKey_Persist.h"
-#include "../Common/List.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include<unistd.h>
-#include <assert.h>
+
 
 static const char PLAY_DATA_FILE[] = "Play.dat";//剧目文件名常量
 static const char PLAY_DATA_TEMP_FILE[] = "PlayTmp.dat"; //剧目临时文件名常量
 static const char PLAY_KEY_NAME[] = "Play"; //剧目名常量
 
+static const int PLAY_PAGE_SIZE = 5;
 
 int Play_Perst_SelectAll(play_list_t  list){
     play_node_t *newNode;
@@ -187,6 +182,7 @@ int Play_Perst_SetOffset(int id, Pagination_t *paging){
     play_t buf;
     int flag = 0;
     paging->offset = 0;
+    int count = 0;
 
 
     if((fp = fopen(PLAY_DATA_FILE,"rb+")) == NULL){
@@ -196,7 +192,11 @@ int Play_Perst_SetOffset(int id, Pagination_t *paging){
 
     while(!feof(fp)){
         if(fread(&buf, sizeof(play_t), 1, fp)){
-            paging->offset++;
+            count++;
+            if(count == PLAY_PAGE_SIZE + 1){
+                count = 0;
+                paging->offset++;
+            }
             if(buf.id == id){
                 flag = 1;
                 break;
