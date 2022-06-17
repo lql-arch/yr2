@@ -39,12 +39,11 @@ int Tick_UI_MgrEntry(int schedule_id){
     printf(
             "\n============================================================================\n");
     printf(
-            "*********************** Show program information *****************************\n",schedule_id);
+            "*********************** Show program information *****************************\n");
     printf("%8s %8s  %8s  %10s  %8s %8s\n", "schedule_ID", "play_ID", "studio_ID",
            "date", "time","seat_count");
-    printf(
-            "-------------------------------------------------------------------------------\n");
-    //ÏÔÊ¾Êý¾Ý
+    printf("-------------------------------------------------------------------------------\n");
+
     printf("%8d %8d  %8d  %04d-%02d-%02d  %02d-%02d-%02d %8d \n",rec.id,
        rec.play_id, rec.studio_id, rec.date.hour,
        rec.date.minute,rec.date.second,rec.time.hour,

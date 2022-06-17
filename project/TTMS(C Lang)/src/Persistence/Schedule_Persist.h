@@ -10,7 +10,7 @@
 void Create_File_Name(char id);
 
 //功能：根据剧目ID载入演出计划
-int Schedule_Perst_SeletByPlay(int id,schedule_t *buf);
+int Schedule_Perst_SeletByPlay(int id,schedule_list_t buf);
 
 //功能：存储演出计划
 int Schedule_Perst_Insert(schedule_t *p);

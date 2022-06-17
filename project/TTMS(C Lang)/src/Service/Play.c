@@ -28,8 +28,8 @@ int Play_Srv_Deleteify(int id){
 }
 
 
-int Play_Srv_FetchByID(int id,play_t *date){
-    return Play_Perst_SelectByID(id,date);
+int Play_Srv_FetchByID(int play_id,play_t *date){
+    return Play_Perst_SelectByID(play_id,date);
 }
 
 

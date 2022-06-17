@@ -17,11 +17,10 @@ static const char TICKET_DATA_TEMP_FILE[] = "TicketTmp.dat";
 
 int Ticket_Perst_Insert(int schedule_id){
     schedule_t sch;
-    seat_list_t seat_list;
     seat_node_t *p;
     play_t play;
-    int cnt = 0;
     FILE *fp;
+    int seat_num;
 
 
     if((fp = fopen(TICKET_DATA_FILE,"ab")) == NULL) {
@@ -36,18 +35,17 @@ int Ticket_Perst_Insert(int schedule_id){
         return 0;
     }
 
-    if (! Play_Srv_FetchByID(schedule_id,&play)) {
+    if (! Play_Srv_FetchByID(sch.play_id,&play)) {
         printf("The play does not exist!\nPress [Enter] key to return\n");
         setbuf(stdin,NULL);
         getchar();
         return 0;
     }
 
-    List_Init(seat_list,seat_node_t);
-    Seat_Srv_FetchValidByRoomID(seat_list,sch.studio_id);
+    seat_num = sch.seat_count;
 
     ticket_t data;
-    List_ForEach(seat_list,p)
+    for(int i = 0 ;i < seat_num;i++)
     {
         data.id = EntKey_Perst_GetNewKeys(TICKET_KEY_NAME,1);
         data.price = play.price;
@@ -55,11 +53,10 @@ int Ticket_Perst_Insert(int schedule_id){
         data.seat_id = p->data.id;
         data.status = 0;
         fwrite(&data,sizeof(ticket_t),1,fp);
-        cnt++;
     }
     fclose(fp);
 
-    return cnt;
+    return seat_num;
 }
 
 int Ticket_Perst_Rem(int schedule_id){
@@ -81,7 +78,6 @@ int Ticket_Perst_Rem(int schedule_id){
         printf("Cannot open file %s!\n", TICKET_DATA_FILE);
         return 0;
     }
-
 
     ticket_t buf;
 

@@ -62,6 +62,11 @@ int Play_Perst_Insert(play_t* date){
         printf("Cannot open file %s!\n", PLAY_DATA_FILE);
         return 0;
     }
+//    printf("%5d   %15s   %5d   %15s   %10d    %10d   %04d-%02d-%02d   %04d-%02d-%02d   %8d\n", date->id,
+//          date->name, date->type,date->area,date->rating,date->duration,
+//          date->start_date.year,date->start_date.month,date->start_date.day,
+//          date->end_date.year,date->start_date.month,date->start_date.day,date->price);
+
 
     rtn = fwrite(date, sizeof(play_t), 1, fp);
 

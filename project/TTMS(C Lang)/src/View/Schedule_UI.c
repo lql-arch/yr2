@@ -3,23 +3,16 @@
 //
 
 #include "Schedule_UI.h"
-#include "../Service/Schedule.h"
-#include "../Common/List.h"
-#include "Creat_Ticket_UI.h"
-#include "Schedule_Persist.h"
-#include "Creat_Ticket.h"
-#include "Creat_Ticket_Persist.h"
-#include <stdio.h>
-#include <string.h>
-
+#include "Play.h"
 
 
 void Schedule_UI_MgtEntry(int play_id){
     int i,id;
     char choice;
     char ch;
-    Create_File_Name((char)play_id);
+    //Create_File_Name((char)play_id);
 
+    schedule_t buf;
     schedule_list_t head;
     schedule_node_t *pos;
     Pagination_t paging;
@@ -29,7 +22,8 @@ void Schedule_UI_MgtEntry(int play_id){
     paging.pageSize = 5;
 
     //载入数据
-    paging.totalRecords = Schedule_Srv_FetchAll(head);
+    //paging.totalRecords = Schedule_Srv_FetchAll(head);
+    paging.totalRecords = Schedule_Srv_FetchByPlay(play_id,head);
     Paging_Locate_FirstPage(head, paging);
 
 
@@ -51,7 +45,7 @@ void Schedule_UI_MgtEntry(int play_id){
                 "------------------------------------------------------------------\n");
         //显示数据
         Paging_ViewPage_ForEach(head, paging, schedule_node_t, pos, i){
-            printf("%8d  %5d  %10d  %04d-%02d-%02d  %02d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
+            printf("%8d  %5d  %10d  %02d-%02d-%02d  %04d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
                    pos->date.time.hour,pos->date.time.minute,pos->date.time.second,pos->date.date.hour,pos->date.date.minute,pos->date.date.second, pos->date.seat_count);
         }
 
@@ -76,7 +70,8 @@ void Schedule_UI_MgtEntry(int play_id){
             case 'A':
                 if (Schedule_UI_Add(play_id)) //新添加成功，跳到最后一页显示
                 {
-                    paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    //paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    paging.totalRecords = Schedule_Srv_FetchByPlay(play_id,head);
                     Paging_Locate_LastPage(head, paging, schedule_node_t);
                 }
                 break;
@@ -86,7 +81,8 @@ void Schedule_UI_MgtEntry(int play_id){
                 scanf("%d", &id);
                 while ((ch = getchar()) != '\n') {}
                 if (Schedule_UI_Delete(id)) {	//从新载入数据
-                    paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    //paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    paging.totalRecords = Schedule_Srv_FetchByPlay(play_id,head);
                     List_Paging(head, paging, schedule_node_t);
                 }
                 break;
@@ -96,7 +92,8 @@ void Schedule_UI_MgtEntry(int play_id){
                 scanf("%d", &id);
                 while ((ch = getchar()) != '\n') {}
                 if (Schedule_UI_Modify(id)) {	//从新载入数据
-                    paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    //paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    paging.totalRecords = Schedule_Srv_FetchByPlay(play_id,head);
                     List_Paging(head, paging, schedule_node_t);
                 }
                 break;
@@ -105,12 +102,15 @@ void Schedule_UI_MgtEntry(int play_id){
                 printf("Input the ID:");
                 scanf("%d", &id);
                 while ((ch = getchar()) != '\n') {}
+                if(!Schedule_Srv_FetchByID(id,&buf)){
+                    fprintf(stderr,"Error:%d does not exist.\n",id);
+                    break;
+                }
                 if(Schedule_SetOffset(id,&paging)){
-                    paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    //paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    paging.totalRecords = Schedule_Srv_FetchByPlay(play_id,head);
                     List_Paging(head, paging, schedule_node_t);
                 }
-                paging.totalRecords = Schedule_Srv_FetchAll(head);
-                List_Paging(head, paging, schedule_node_t);
                 break;
             case 'p':
             case 'P':
@@ -130,6 +130,10 @@ void Schedule_UI_MgtEntry(int play_id){
                 scanf("%d", &id);
                 while((ch = getchar()) != '\n')
                     continue;
+                if(!Schedule_Srv_FetchByID(id,&buf)){
+                    fprintf(stderr,"Error:%d does not exist.\n",id);
+                    break;
+                }
                 Tick_UI_MgrEntry(id);
                 break;
         }
@@ -138,10 +142,12 @@ void Schedule_UI_MgtEntry(int play_id){
     List_Destroy(head, schedule_node_t);
 }
 
+
 int Schedule_UI_Add(int play_id){
     int NewCount;
     schedule_t t;
     char choice;
+    studio_t buf1;
 
     do{
         #ifdef linux
@@ -155,12 +161,16 @@ int Schedule_UI_Add(int play_id){
         printf("---------------------------------------------------------------\n");
         printf("Projection Room:");
         scanf("%d", &(t.studio_id));
+        do{
+            fprintf(stderr,"Error:%d no exist.\n",t.studio_id);
+            printf("Projection Room:");
+            scanf("%d", &(t.studio_id));
+        }while(!Studio_Srv_FetchByID(t.studio_id,&buf1));
         printf("Date of screening(year-month-second):");
         scanf("%d-%d-%d",&t.date.hour,&t.date.minute,&t.date.second);
         printf("Time of screening(hour-minute-second):");
         scanf("%d-%d-%d",&t.time.hour,&t.time.minute,&t.time.second);
-        printf("Number of seat:");
-        scanf("%d",&t.seat_count);
+        t.seat_count = buf1.seatsCount;
         t.play_id = play_id;
         printf("=================================================================\n");
 
@@ -182,6 +192,8 @@ int Schedule_UI_Modify(int id){
     schedule_t t;
     int play_id ;
     int rtn = 0;
+    studio_t buf1;
+    play_t buf2;
 
     /*Load record*/
     if (!Schedule_Srv_FetchByID(id, &t)) {
@@ -206,14 +218,23 @@ int Schedule_UI_Modify(int id){
     printf("Schedule ID:%d\n", t.id);
     printf("Play_id[%d]:", t.play_id);
     scanf("%d",&t.play_id);
+    do{
+        fprintf(stderr,"Error:%d no exist.\n");
+        printf("Projection Room:");
+        scanf("%d", &(t.studio_id));
+    }while(!Play_Srv_FetchByID(t.studio_id,&buf2));
     printf("studio_id[%d]:",t.studio_id);
     scanf("%d", &(t.studio_id));
+    do{
+        fprintf(stderr,"Error:%d no exist.\n");
+        printf("Projection Room:");
+        scanf("%d", &(t.studio_id));
+    }while(!Studio_Srv_FetchByID(t.studio_id,&buf1));
     printf("Date of screening(year-month-second):");
     scanf("%d-%d-%d",&t.date.hour,&t.date.minute,&t.date.second);
     printf("Time of screening(hour-minute-second):");
     scanf("%d-%d-%d",&t.time.hour,&t.time.minute,&t.time.second);
-    printf("Number of seat:");
-    scanf("%d",&t.seat_count);
+    t.seat_count = buf1.seatsCount;
     printf("=======================================================\n");
 
     if (Schedule_Srv_Modify(&t, play_id)) {

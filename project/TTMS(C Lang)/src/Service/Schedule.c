@@ -6,7 +6,7 @@
 #include "List.h"
 
 //根据剧目id获取演出计划
-int Schedule_Srv_FetchByPlay(int play_id,schedule_t *buf){
+int Schedule_Srv_FetchByPlay(int play_id,schedule_list_t buf){
     return Schedule_Perst_SeletByPlay(play_id, buf);
 }
 

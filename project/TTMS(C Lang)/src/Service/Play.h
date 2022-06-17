@@ -32,7 +32,7 @@ typedef struct {
     int id;                 //剧目id
     char name[31];          //剧目名称
     play_type_t type;       //剧目类型
-    char area[9];           //剧目出品地区
+    char area[20];           //剧目出品地区
     play_rating_t rating;   //剧目等级
     int duration;           //时长，以分钟为单位
     ttms_date_t start_date; //开始放映日期

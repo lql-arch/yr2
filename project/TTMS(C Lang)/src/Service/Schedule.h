@@ -14,7 +14,7 @@ typedef struct {
 }ttms_time_t;
 
 typedef struct {
-    int id;             // 演出计划id
+    int id;             //演出计划id
     int play_id;        //上映剧目id
     int studio_id;      //演出厅id
     ttms_time_t date;   //放映日期
@@ -30,7 +30,7 @@ typedef struct schedule_node {
 
 
 //根据剧目id获取演出计划
-int Schedule_Srv_FetchByPlay(int play_id,schedule_t *buf);
+int Schedule_Srv_FetchByPlay(int play_id,schedule_list_t buf);
 
 //添加新演出计划服务
 int Schedule_Srv_Add(schedule_t *p);
@@ -46,4 +46,4 @@ int Schedule_SetOffset(int id, Pagination_t *ptr);
 //获取所有演出计划
 int Schedule_Srv_FetchAll(schedule_list_t head);
 
-#endif //TTMS_C_LANG__SCHEDULE_PERSIST_H
+#endif //TTMS_C_LANG__SCHEDULE_H

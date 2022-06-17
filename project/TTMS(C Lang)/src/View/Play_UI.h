@@ -6,6 +6,12 @@
 #define TTMS_C_LANG__PLAY_UI_H
 
 #include "List.h"
+#include "Play.h"
+#include "../Service/Play.h"
+#include "../Common/List.h"
+#include "../Service/Schedule.h"
+#include "Schedule_UI.h"
+#include <stdio.h>
 
 //管理剧目界面
 void Play_UI_MgtEntry(int argc);
@@ -22,5 +28,5 @@ int Play_UI_Delete(int id);
 //查询剧目界面
 int Play_UI_Query(int id,Pagination_t *paging);
 
-
+int isTime(play_t t);
 #endif //TTMS_C_LANG__PLAY_UI_H
