@@ -164,7 +164,6 @@ int Studio_Perst_SelectByID(int ID, studio_t *buf) {
 				found = 1;
 				break;
 			};
-
 		}
 	}
 	fclose(fp);

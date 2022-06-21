@@ -32,11 +32,16 @@ typedef struct ticket_node{
 int Schedule_Srv_FetchByID(int id,schedule_t* buf);
 
 //增加文件中票的信息
-int Ticket_Srv_GenBatch(int schedule_id);
+int Ticket_Srv_GenBatch(int schedule_id,int studio_id);
 
 //根据id删除票信息
 int Ticket_Srv_DeleteBatch(int schedule_id);
 
-//int Ticket_Srv_FetchAll(ticket_list_t list);
+int Ticket_Srv_FetchByID(int id,ticket_t *buf);
+
+int Ticket_Srv_FetchSold(ticket_list_t list, ticket_list_t listSold);
+
+int Ticket_Srv_FetchAll(ticket_list_t list);
+
 
 #endif //TTMS_C_LANG__CREAT_TICKET_H

@@ -64,4 +64,6 @@ int Play_Srv_FetchByID(int id,play_t *date);
 //ÐÞ¸ÄÆ«ÒÆÁ¿
 int Play_SetOffset(int id,Pagination_t *paging);
 
+int Play_Srv_FetchByName(play_list_t list,char condt[]);
+
 #endif //TTMS_C_LANG__PLAY_H

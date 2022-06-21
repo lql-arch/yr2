@@ -25,3 +25,7 @@ int Schedule_UI_Delete(int id);
 
 //生成演出票界面
 //void Ticket_UI_MgtEntry();
+
+void  Schedule_UI_ListAll(void);
+
+void Schedule_UI_ShowList(schedule_list_t list, Pagination_t paging);

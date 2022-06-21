@@ -17,7 +17,7 @@ static const char SCHEDULE_KEY_NAME[] = "Schedule"; //演出计划名
 static const char SCHEDULE_DATA_FILE[] = "Schedule.dat";//演出计划文件名
 static const char SCHEDULE_DATA_TEMP_FILE[] = "ScheduleTmp.dat"; //演出计划临时文件名常量
 
-static const SCHEDULE_PAGE_SIZE = 5;
+static const int SCHEDULE_PAGE_SIZE = 5;
 
 //static char SCHEDULE_KEY_NAME[24]; //演出计划名
 //static char SCHEDULE_DATA_FILE[24];//演出计划文件名
@@ -35,6 +35,7 @@ int Schedule_Perst_SelectByID(int id , schedule_t *buf){
 
     FILE *fp;
     if (NULL == (fp = fopen(SCHEDULE_DATA_FILE, "rb"))) {
+        fprintf(stderr,"Error:file %s does not exist.\n",SCHEDULE_DATA_FILE);
         return 0;
     }
 

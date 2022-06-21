@@ -3,6 +3,7 @@
 //
 
 #include "Play_UI.h"
+#include "Seat_UI.h"
 
 static const int PLAY_PAGE_SIZE = 5;
 
@@ -25,6 +26,10 @@ void Play_UI_MgtEntry(int argc){
     Paging_Locate_FirstPage(head, paging);
 
     do {
+
+        while((ch = getchar()) != '\n')
+            continue;
+
     #ifdef linux
             system("clear");
     #endif
@@ -100,6 +105,7 @@ void Play_UI_MgtEntry(int argc){
                 scanf("%d", &id);
                 while ((ch = getchar()) != '\n')
                     continue;
+                Seat_UI_MgtEntry(id);
                 if(Play_UI_Query(id,&paging)){
                     paging.totalRecords = Play_Srv_FetchAll(head);
                     List_Paging(head, paging, play_node_t);
@@ -284,7 +290,7 @@ int Play_UI_Delete(int id){
         if (Play_Srv_Deleteify(id)) {
             Schedule_srv_DeleteByID(id);
             printf("The play deleted successfully!\n");
-            rtn = 1;
+            rtn += 1;
         } else {
             printf("The play does not exist!\n");
         }
@@ -294,7 +300,7 @@ int Play_UI_Delete(int id){
         scanf("%c", &choice);
         printf("Id of be deleted:");
         scanf("%d",&new_id);
-    } while ('u' == choice || 'U' == choice);
+    } while ('d' == choice || 'D' == choice);
 
 
     printf("Press [Enter] key to return!\n");
@@ -327,3 +333,89 @@ int isTime(play_t t){
 
     return 0;
 }
+
+void Play_UI_ShowList(play_list_t list,Pagination_t paging)//界面函数
+{
+    char ch;
+    int i = 0,j;
+    char choice;
+    play_node_t *pos;
+
+    do {
+        while ((ch = getchar()) != '\n')
+            continue;
+
+    #ifdef linux
+            system("clear");
+    #endif
+    #ifdef WIN32
+            system("cls");
+    #endif
+        printf("\n\t\t\t\t=====================================================================================\n");
+        printf("\t\t\t\t\t\t\t\t\t\t\t*********剧目信息**********\n");
+        printf("\n\t\t\t\t-------------------------------------------------------------------------------------\n");
+        printf("\t\t\t\t%4s %12s %12s\t %8s %8s\t %8s %10s %6s",
+               "ID", "名称", "出品地区", "类型", "等级", "时长(分钟)", "放映时间", "票价");
+        printf("\n\t\t\t\t-------------------------------------------------------------------------------------\n");
+        Paging_ViewPage_ForEach(list, paging, play_node_t, pos, i) {
+            printf("\t\t\t\t%4d %12s %12s\t ", pos->date.id, pos->date.name, pos->date.area);
+            j = pos->date.type;
+            switch (j) {
+                case 1:
+                    printf("%8s ", "电影");
+                    break;
+                case 2:
+                    printf("%8s ", "歌剧");
+                    break;
+                case 3:
+                    printf("%8s ", "音乐会");
+                    break;
+            }
+            j = pos->date.rating;
+            switch (j) {
+                case 1:
+                    printf("%8s ", "儿童剧");
+                    break;
+                case 2:
+                    printf("%8s ", "少年剧");
+                    break;
+                case 3:
+                    printf("%8s ", "成人剧");
+                    break;
+                default:
+                    printf("%8s ", "无");
+                    break;
+            }
+            printf("\t%6d\t\t", pos->date.duration);
+            printf("%04d/%02d/%02d ", pos->date.start_date.year, pos->date.start_date.month, pos->date.start_date.day);;
+            printf("%6d \n ", pos->date.price);
+        }
+        printf("\t\t\t\t------- 共 %2d 项 ------------------------- 第 %2d/%2d 页 -------------------------------\n",
+               paging.totalRecords, Pageing_CurPage(paging), Pageing_TotalPages(paging));
+        printf(
+                "************************************************************************************************************************\n");
+        printf(
+                "[P]revPage|[N]extPage | [S]ure");
+        printf("\n========================================================================================================================\n");
+        printf("Your Choice:");
+        fflush(stdin);
+        scanf("%c", &choice);
+        while ((ch = getchar()) != '\n')
+            continue;
+
+        switch (choice) {
+            case 'p':
+            case 'P':
+                if (!Pageing_IsFirstPage(paging)) {
+                    Paging_Locate_OffsetPage(list, paging, -1, play_node_t);
+                }
+                break;
+            case 'n':
+            case 'N':
+                if (!Pageing_IsLastPage(paging)) {
+                    Paging_Locate_OffsetPage(list, paging, 1, play_node_t);
+                }
+                break;
+        }
+    }while(choice != 's' && choice != 'S');
+}//载入数据

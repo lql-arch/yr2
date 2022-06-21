@@ -36,3 +36,8 @@ int Play_Srv_FetchByID(int play_id,play_t *date){
 int Play_SetOffset(int id, Pagination_t *paging){
     return Play_Perst_SetOffset(id,paging);
 }
+
+int Play_Srv_FetchByName(play_list_t list,char condt[])
+{
+    return Play_Perst_SelectByName(list,condt);
+}

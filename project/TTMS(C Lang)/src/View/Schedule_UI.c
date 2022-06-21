@@ -4,7 +4,9 @@
 
 #include "Schedule_UI.h"
 #include "Play.h"
+#include "Seat_UI.h"
 
+const static int SCHEDULE_PAGE_SIZE = 5;
 
 void Schedule_UI_MgtEntry(int play_id){
     int i,id;
@@ -19,7 +21,7 @@ void Schedule_UI_MgtEntry(int play_id){
 
     List_Init(head, schedule_node_t);
     paging.offset = 0;
-    paging.pageSize = 5;
+    paging.pageSize = SCHEDULE_PAGE_SIZE;
 
     //载入数据
     //paging.totalRecords = Schedule_Srv_FetchAll(head);
@@ -28,6 +30,7 @@ void Schedule_UI_MgtEntry(int play_id){
 
 
     do {
+        setbuf(stdin,NULL);
         #ifdef linux
                 system("clear");
         #endif
@@ -102,6 +105,7 @@ void Schedule_UI_MgtEntry(int play_id){
                 printf("Input the ID:");
                 scanf("%d", &id);
                 while ((ch = getchar()) != '\n') {}
+                Seat_UI_MgtEntry(id);
                 if(!Schedule_Srv_FetchByID(id,&buf)){
                     fprintf(stderr,"Error:%d does not exist.\n",id);
                     break;
@@ -260,4 +264,209 @@ int Schedule_UI_Delete(int id){
     getchar();
 
     return rtn;
+}
+
+void Schedule_UI_ShowList(schedule_list_t list, Pagination_t paging)
+{
+    int i = 0;
+    schedule_node_t* p;
+    play_t play;
+    studio_t studio;
+    char choice,ch;
+
+    Play_Srv_FetchByID(list->next->date.play_id, &play);
+
+    do{
+        printf("\n\t\t\t\t==================================================================\n");
+        printf("\t\t\t\t\t\t\t*********演出计划*********\n");
+        printf("\t\t\t\t------------------------------------------------------------------\n");
+        printf("\t\t\t\t%4s\t%10s\t%8s\t%10s\t%5s \t%5s\n", "ID", "剧目", "演出厅", "放映日期", "放映时间", "座位数");
+        //显示数据
+        Paging_ViewPage_ForEach(list, paging, schedule_node_t, p, i)
+        {
+            Play_Srv_FetchByID(p->date.play_id, &play);
+            Studio_Srv_FetchByID(p->date.studio_id, &studio);
+            printf("\t\t\t\t%4d\t %10s\t %8s\t", p->date.id, play.name, studio.name);
+            printf("%4d-%02d-%02d \t", p->date.date.hour, p->date.date.minute, p->date.date.second);
+            printf("%2d:%02d \t", p->date.time.hour, p->date.time.minute);
+            printf("\t%5d\n", p->date.seat_count);
+            }
+        printf("\n\t\t\t\t-------- 共 %2d 项 --------------------------- %2d/%2d 页 --------\n",
+        paging.totalRecords, Pageing_CurPage(paging),
+        Pageing_TotalPages(paging));
+        printf(" ***********************************************************************************\n");
+        printf("    		[P]revPage       			 [N]extPage   				  [C]ontinue    \n");
+
+        printf("Your Choice:");
+        fflush(stdin);
+        scanf("%c", &choice);
+        while ((ch = getchar()) != '\n')
+            continue;
+
+        switch (choice)
+        {
+            case 'P':
+                if (!Pageing_IsFirstPage(paging))
+                Paging_Locate_OffsetPage(list, paging, -1, schedule_node_t);
+                break;
+
+            case 'N':
+                if (!Pageing_IsLastPage(paging))
+                Paging_Locate_OffsetPage(list, paging, 1, schedule_node_t);
+                break;
+            default:
+                break;
+        }
+    }while(choice !='c' && choice !='C');
+
+    setbuf(stdin,NULL);
+}
+
+int Schedule_UI_Query(char *play_name)
+{
+    play_list_t list_p;
+    schedule_list_t list_s;
+    List_Init(list_p,play_node_t);
+    List_Init(list_s,schedule_node_t);
+
+//?????????????
+    Play_Srv_FetchByName(list_p,play_name);
+
+    play_node_t* p;
+    List_ForEach(list_p,p)
+    {
+//???????????????????????????????list_s??
+        Schedule_Srv_FetchByPlay(p->date.id,list_s);
+    }
+
+
+    int len = 0,i;
+    schedule_list_t s;
+    List_ForEach(list_s,s)
+    {
+        len++;
+    }
+//?????????
+    schedule_node_t *pos;
+    Pagination_t paging;
+
+
+    paging.offset = 0;
+    paging.pageSize = SCHEDULE_PAGE_SIZE;
+
+    paging.totalRecords = len;
+    Paging_Locate_FirstPage(list_s, paging);
+
+    printf(
+            "\n==================================================================\n");
+    printf(
+            "********************** ????????? **********************\n");
+    printf("%8s %8s  %8s  %8s  %8s %8s\n", "??????ID", "??????ID", "?????ID",
+           "???????", "??????","??λ??");
+    printf(
+            "------------------------------------------------------------------\n");
+
+    Paging_ViewPage_ForEach(list_s, paging, schedule_node_t, pos, i){
+        printf("%8d %8d  %8d  %d/%d/%d  %d/%d/%d %8d \n", pos->date.id,
+               pos->date.play_id, pos->date.studio_id, pos->date.date.hour,
+               pos->date.date.minute,pos->date.date.second,pos->date.time.hour,
+               pos->date.time.minute,pos->date.time.second,pos->date.seat_count);
+    }
+
+    printf(
+            "------- ??:%2d? ----------------------- ??? :%2d/%2d ----\n",
+            paging.totalRecords, Pageing_CurPage(paging),
+            Pageing_TotalPages(paging));
+    printf(
+            "******************************************************************\n");
+    setbuf(stdin,NULL);
+    getchar();
+    system("clear");
+    return 1;
+}
+
+void Schedule_UI_ListAll(void)
+{
+    int i,id;
+    char choice;
+    char play_name[64];
+    schedule_list_t head;
+    schedule_node_t *pos;
+    Pagination_t paging;
+
+    List_Init(head, schedule_node_t);
+    paging.offset = 0;
+    paging.pageSize = SCHEDULE_PAGE_SIZE;
+
+
+    paging.totalRecords = Schedule_Srv_FetchAll(head);
+    Paging_Locate_FirstPage(head, paging);
+    do {
+        printf(
+                "\n==========================================================\n");
+        printf(
+                "********************** ????????? **********************\n");
+        printf("%8s %8s  %8s  %8s  %8s %8s\n", "??????ID", "??????ID", "?????ID",
+               "???????", "??????","??λ??");
+        printf(
+                "----------------------------------------------------------\n");
+
+        Paging_ViewPage_ForEach(head, paging, schedule_node_t, pos, i){
+            printf("%8d %8d  %8d  %d/%d/%d  %d/%d/%d %8d \n", pos->date.id,
+                   pos->date.play_id, pos->date.studio_id, pos->date.date.hour,
+                   pos->date.date.minute,pos->date.date.second,pos->date.time.hour,
+                   pos->date.time.minute,pos->date.time.second,pos->date.seat_count);
+        }
+
+        printf(
+                "------- ??:%2d? ------------------------- ??? :%2d/%2d ----\n",
+                paging.totalRecords, Pageing_CurPage(paging),
+                Pageing_TotalPages(paging));
+        printf(
+                "**********************************************************\n");
+        printf(
+                "[P]revPage  |  [N]extPage   |  [Q]uery | [R]eturn  |");
+        printf(
+                "\n\n\n\n==========================================================\n");
+        printf("Your Choice:");
+        fflush(stdin);
+        setbuf(stdin,NULL);
+        scanf("%c", &choice);
+        setbuf(stdin,NULL);
+        fflush(stdin);
+
+
+
+        switch (choice) {
+            case 'Q':
+            case 'q':
+
+                system("clear");
+                printf("??????????????????:");
+                scanf("%s", play_name);
+                if (Schedule_UI_Query(play_name))
+                {
+                    paging.totalRecords = Schedule_Srv_FetchAll(head);
+                    Paging_Locate_LastPage(head, paging, schedule_node_t);
+                }
+                break;
+
+            case 'P':
+            case 'p':
+                system("clear");
+                if (!Pageing_IsFirstPage(paging)) {
+                    Paging_Locate_OffsetPage(head, paging, -1, schedule_node_t);
+                }
+                break;
+            case 'N':
+            case 'n':
+                system("clear");
+                if (!Pageing_IsLastPage(paging)) {
+                    Paging_Locate_OffsetPage(head, paging, 1, schedule_node_t);
+                }
+                break;
+        }
+    } while ((choice != 'r')&&(choice!='R'));
+    system("clear");
+    List_Destroy(head, schedule_node_t);
 }

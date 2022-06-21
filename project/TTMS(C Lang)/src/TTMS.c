@@ -19,10 +19,28 @@
 #endif
 
 #include "./View/Main_Menu.h"
+#include "./View/Account_UI.h"
+#include "./View/Sale_UI.h"
+
 
 //系统运行入口函数main
 int main(void) {
 	setvbuf(stdout, NULL, _IONBF, 0);
-	Main_Menu();
+    account_t t;
+    GetUser(&t);
+
+    Account_Srv_InitSys();//tmp_admin默认666666
+
+    int ans = SysLogin(&t);
+    if(ans == 1)
+    {
+        Main_Menu1(t.username);
+    }else if(ans == 0){
+        Main_Menu0(t.username);
+    }else if(ans == 2){
+        Main_Menu2(t.username);
+    }else if(ans == 9){
+        Main_Menu9(t.username);
+    }
 	return EXIT_SUCCESS;
 }

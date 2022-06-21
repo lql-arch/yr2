@@ -7,9 +7,7 @@
 * Version:  v.1 	 
 * Date: 	2015年4月22日	
 */
-
-#ifndef SEATPERSIST_H_
-#define SEATPERSIST_H_
+#pragma once
 
 #include "../Service/Seat.h"
 
@@ -36,7 +34,7 @@ int Seat_Perst_DeleteAllByRoomID(int roomID);
 
 //标识符：TTMS_SCU_Seat_Perst_SelByRoomID
 //功能：根据演出厅ID从文件中载入所有座位
-int Seat_Perst_SelectByRoomID(seat_list_t list, int roomID);
+int Seat_Perst_SelectByRoomID(seat_list_t* list, int roomID);
 
 //标识符：TTMS_SCU_Studio_Perst_SelByID
 //功能：根据ID从文件中载入座位 
@@ -46,4 +44,4 @@ int Seat_Perst_SelectByID(int ID, seat_t *buf);
 //功能：从文件中载入所有座位 
 int Seat_Perst_SelectAll(seat_list_t list);
 
-#endif /* SEATPERSIST_H_ */
+

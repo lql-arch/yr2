@@ -7,9 +7,6 @@
 * Version:  v.1 	 
 * Date: 	2015Äê4ÔÂ22ÈÕ	
 */
-
-#ifndef SEAT_UI_H_
-#define SEAT_UI_H_
 #include "../Common/List.h"
 #include "../Service/Seat.h"
 
@@ -38,4 +35,3 @@ int Seat_UI_Modify(seat_list_t list, int rowsCount, int colsCount);
 int Seat_UI_Delete(seat_list_t list, int rowsCount, int colsCount);
 
 
-#endif /* SEAT_UI_H_ */

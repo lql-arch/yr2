@@ -28,5 +28,9 @@ int Play_UI_Delete(int id);
 //查询剧目界面
 int Play_UI_Query(int id,Pagination_t *paging);
 
+//判断开始和结束时间是否正常
 int isTime(play_t t);
+
+void Play_UI_ShowList(play_list_t list,Pagination_t paging);//界面函数
+
 #endif //TTMS_C_LANG__PLAY_UI_H

@@ -8,9 +8,10 @@
 * Date: 	2015年4月22日	
 */
 
-#ifndef SEAT_H_
-#define SEAT_H_
+#pragma once
 
+//#include "../Service/EntityKey.h"
+#include "../Persistence/EntityKey_Persist.h"
 //座位状态 
 typedef enum{
 	SEAT_NONE=0,			//空位
@@ -55,7 +56,7 @@ void Seat_Srv_AddToSoftedList(seat_list_t list , seat_node_t *node);
 标识符：TTMS_SCU_Seat_Srv_Add
 功能：单个添加座位
 */
-int Seat_Srv_Add(const seat_t *data);
+int Seat_Srv_Add(seat_t *data);
 
 /*
 标识符：TTMS_SCU_Seat_Srv_AddBatch 
@@ -99,11 +100,6 @@ int Seat_Srv_FetchByID(int ID, seat_t *buf);
 */
 int Seat_Srv_FetchByRoomID(seat_list_t list, int roomID);
 
-/*
-标识符：TTMS_SCU_Seat_Srv_FetchByRoomID
-功能：根据放映厅ID提取有效的座位
-*/
-int Seat_Srv_FetchValidByRoomID(seat_list_t list, int roomID);
 
 /*
 标识符：TTMS_SCU_Seat_Srv_FindByRC
@@ -117,7 +113,6 @@ seat_node_t * Seat_Srv_FindByRowCol(seat_list_t list, int row, int column);
 seat_node_t * Seat_Srv_FindByID(seat_list_t list, int seatID);
 
 
-#endif //SEAT_H_
 
 
 

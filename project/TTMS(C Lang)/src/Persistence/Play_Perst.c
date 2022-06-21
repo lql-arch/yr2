@@ -208,3 +208,41 @@ int Play_Perst_SetOffset(int id, Pagination_t *paging){
 
     return 1;
 }
+
+int Play_Perst_SelectByName(play_list_t list, char condt[])
+{
+    int recCount = 0;
+
+    assert(NULL!=list);
+
+    FILE *fp = fopen(PLAY_DATA_FILE, "rb");
+    if (NULL == fp)
+    {
+        return 0;
+    }
+
+    play_t data;
+    play_list_t p;
+    List_Free(list, play_node_t);
+
+    while (!feof(fp))
+    {
+        p = (play_list_t)malloc(sizeof(play_node_t));
+        if (fread(&data, sizeof(play_t), 1, fp))
+        {
+            if (strstr(data.name,condt))
+            {
+                p->date = data;
+                recCount++;
+                List_AddTail(list,p);
+            }
+            else
+            {
+                free(p);
+            }
+        }
+    }
+    fclose(fp);
+
+    return recCount;
+}

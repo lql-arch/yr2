@@ -16,7 +16,14 @@
 /*初始化链表list。链表为带头结点的双向循环链表*/
 #define List_Init(list, list_node_t) {					\
 		list=(list_node_t*)malloc(sizeof(list_node_t)); \
-		(list)->next=(list)->prev=list;					\
+		(list)->next=(list)->prev =list;				\
+	}
+
+#define List_Init_pd(list, list_node_t) {              \
+        if(list == NULL){                               \
+            list=(list_node_t*)malloc(sizeof(list_node_t)); \
+            (list)->next=(list)->prev=list;      \
+        }\
 	}
 
 //释放链表list中所有数据结点。list 为链表头指针，list_node_t为链表结点类型
@@ -24,7 +31,7 @@
 		assert(NULL!=list);						\
 		list_node_t *tmpPtr;					\
 		(list)->prev->next=NULL; 				\
-		while(NULL!=(tmpPtr=(list)->next)){ 	\
+		while(NULL != (tmpPtr=(list)->next)){ 	\
 			(list)->next=tmpPtr->next;			\
 			free(tmpPtr);						\
 		}										\
@@ -49,10 +56,10 @@
 
 //链表尾插法，list为头指针，new为新节点
 #define List_AddTail(list, newNode) {			\
-		(newNode)->prev=(list)->prev; 		 	\
-		(list)->prev->next=newNode;			 	\
-		(newNode)->next=list;				 	\
-		(list)->prev=newNode;				 	\
+		(newNode)->prev = (list)->prev; 		 	\
+		(list)->prev->next = (newNode);			 	\
+		(newNode)->next = list;				 	\
+		(list)->prev = newNode;				 	\
 	}
 
 //将新节点newNode加入到node之前

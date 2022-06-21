@@ -32,7 +32,8 @@ int Play_Perst_SelectByID(int id,play_t *date);
 
 int Play_Perst_SetOffset(int id, Pagination_t *paging);
 
-//void EntKey_Perst_GetNewKeys();
+int Play_Perst_SelectByName(play_list_t list, char condt[]);
+
 
 
 #endif //TTMS_C_LANG__PLAY_PERST_H
