@@ -7,7 +7,7 @@
 #include "Account.h"
 #include "../Persistence/Account_Persist.h"
 
-account_t gl = {0,USR_ANOMY,"Anonymous","123456"};
+account_t gl_CurUser = {0,USR_ANOMY,"Anonymous","123456"};
 
 void Account_Srv_InitSys(){
     if(!Account_perst_CheckAccFile()){
@@ -23,11 +23,11 @@ int Account_Srv_Verify(char usrName[],char pwd[]){
     return Account_Perst_Verify(usrName,pwd);
 }
 
-int Account_Srv_Add(const account_t *data){
+int Account_Srv_Add(account_t *data){
     return Account_Perst_Insert(data);
 }
 
-int Account_Srv_Insert(const account_t *data){
+int Account_Srv_Insert(account_t *data){
     return Account_Perst_Update(data);
 }
 
@@ -51,4 +51,8 @@ account_node_t* Account_Srv_FindByUsrName(account_list_t list,char usrName[]){
     }
 
     return flag == 1 ? p : NULL;
+}
+
+int Account_Srv_FetchByName(char* username,account_t* user){
+    return Account_Perst_FetchByName(username,user);
 }

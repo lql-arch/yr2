@@ -16,7 +16,7 @@ int Sale_UI_SellTicket(ticket_list_t ticketList,seat_list_t seatList);
 
 
 /*显示演出票界面*/
-void Sale_UI_ShowTicket(int scheduleID , int play_id);
+void Sale_UI_ShowTicket(int scheduleID );
 
 
 /*根据剧目显示演出计划界面*/

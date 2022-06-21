@@ -109,7 +109,10 @@ seat_node_t * Seat_Srv_FindByRowCol(seat_list_t list, int row, int column);
 
 /*
 标识符：TTMS_SCU_Studio_Srv_FindByID
-功能：根据ID在链表中获取座位服务*/ 
+功能：根据ID在链表中获取座位服务*/
+
+int Seat_Srv_FindTheByRowCol(seat_t*buf,int row, int column);
+
 seat_node_t * Seat_Srv_FindByID(seat_list_t list, int seatID);
 
 

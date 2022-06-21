@@ -23,7 +23,10 @@ void Play_UI_MgtEntry(int argc){
 
     //‘ÿ»Î ˝æ›
     paging.totalRecords = Play_Srv_FetchAll(head);
+
     Paging_Locate_FirstPage(head, paging);
+
+
 
     do {
 

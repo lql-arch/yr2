@@ -16,6 +16,7 @@
 #include "../View/Account_UI.h"
 #include "../View/Play_UI.h"
 #include "../View/Sale_UI.h"
+#include "SalesAnalysis_UI.h"
 
 void Main_Menu1(char *name) {
 	char choice;
@@ -118,26 +119,26 @@ void Main_Menu9(char *name){
             case 'p':
                 Play_UI_MgtEntry(0);
                 break;
-//		case 'Q':
-//		case 'q':
-//			Queries_Menu();
-//			break;
-		case 'T':
-		case 't':
-			Sale_UI_MgtEntry();
-			break;
-		case 'R':
-		case 'r':
-			Sale_UI_ReturnTicket();
-			break;
-//		case 'N':
-//		case 'n':
-//			SalesAanalysis_UI_MgtEntry();
-//			break;
-		case 'A':
-		case 'a':
-			Account_UI_MgtEntry(9,name);
-			break;
+    		case 'Q':
+    		case 'q':
+    			Queries_Menu();
+    			break;
+            case 'T':
+            case 't':
+                Sale_UI_MgtEntry();
+                break;
+            case 'R':
+            case 'r':
+                Sale_UI_ReturnTicket();
+                break;
+    		case 'N':
+    		case 'n':
+                SalesAnalysis_UI_MgtEntry();
+    			break;
+            case 'A':
+            case 'a':
+                Account_UI_MgtEntry(9,name);
+                break;
         }
     } while ('E' != choice && 'e' != choice);
 
@@ -163,9 +164,8 @@ void Main_Menu0(char *name){
         printf("[P]lay Management.\n");
         printf("[T]icket Sale.\n");
         printf("[R]eturn Ticket.\n");
-        printf("[Q]ueries\n");
-        printf("Ra[n]king and Statistics.\n");
-        printf("[A]ccount Management.\n");
+//        printf("[Q]ueries\n");
+//        printf("[A]ccount Management.\n");
         printf("[E]xist.\n");
         printf("\n==================================================================\n");
         printf("Please input your choice:");
@@ -181,26 +181,22 @@ void Main_Menu0(char *name){
             case 'p':
                 Play_UI_MgtEntry(0);
                 break;
-//		case 'Q':
-//		case 'q':
-//			Queries_Menu();
-//			break;
-		case 'T':
-		case 't':
-			Sale_UI_MgtEntry();
-			break;
-		case 'R':
-		case 'r':
-			Sale_UI_ReturnTicket();
-			break;
-//		case 'N':
-//		case 'n':
-//			SalesAanalysis_UI_MgtEntry();
-//			break;
-		case 'A':
-		case 'a':
-			Account_UI_MgtEntry(0,name);
-			break;
+//            case 'Q':
+//            case 'q':
+//                Queries_Menu();
+//                break;
+            case 'T':
+            case 't':
+                Sale_UI_MgtEntry();
+                break;
+            case 'R':
+            case 'r':
+                Sale_UI_ReturnTicket();
+                break;
+//            case 'A':
+//            case 'a':
+//                Account_UI_MgtEntry(0,name);
+//                break;
         }
     } while ('E' != choice && 'e' != choice);
 
@@ -228,7 +224,6 @@ void Main_Menu2(char *name){
         printf("[T]icket Sale.\n");
         printf("[R]eturn Ticket.\n");
         printf("[Q]ueries\n");
-        printf("Ra[n]king and Statistics.\n");
         printf("[A]ccount Management.\n");
         printf("[E]xist.\n");
         printf("\n==================================================================\n");
@@ -245,26 +240,26 @@ void Main_Menu2(char *name){
             case 'p':
                 Play_UI_MgtEntry(0);
                 break;
-//		case 'Q':
-//		case 'q':
-//			Queries_Menu();
-//			break;
-		case 'T':
-		case 't':
-			Sale_UI_MgtEntry();
-			break;
-		case 'R':
-		case 'r':
-			Sale_UI_ReturnTicket();
-			break;
-//		case 'N':
-//		case 'n':
-//			SalesAanalysis_UI_MgtEntry();
-//			break;
-		case 'A':
-		case 'a':
-			Account_UI_MgtEntry(2,name);
-			break;
+            case 'Q':
+            case 'q':
+                Queries_Menu();
+                break;
+            case 'T':
+            case 't':
+                Sale_UI_MgtEntry();
+                break;
+            case 'R':
+            case 'r':
+                Sale_UI_ReturnTicket();
+                break;
+//            case 'N':
+//            case 'n':
+//                SalesAnalysis_UI_MgtEntry();
+//                break;
+            case 'A':
+            case 'a':
+                Account_UI_MgtEntry(2,name);
+                break;
         }
     } while ('E' != choice && 'e' != choice);
 

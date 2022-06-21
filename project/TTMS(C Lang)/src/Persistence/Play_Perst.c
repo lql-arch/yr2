@@ -29,8 +29,7 @@ int Play_Perst_SelectAll(play_list_t  list){
         if (fread(&data, sizeof(play_t), 1, fp)) {
             newNode = (play_node_t*) malloc(sizeof(play_node_t));
             if (!newNode) {
-                printf(
-                        "Warning, Memory OverFlow!!!\n Cannot Load more Data into memory!!!\n");
+                printf("Warning, Memory OverFlow!!!\n Cannot Load more Data into memory!!!\n");
                 break;
             }
             newNode->date = data;
@@ -40,6 +39,7 @@ int Play_Perst_SelectAll(play_list_t  list){
     }
 
     fclose(fp);
+
     return recCount;
 }
 

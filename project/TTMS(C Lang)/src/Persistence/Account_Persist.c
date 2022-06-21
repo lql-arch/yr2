@@ -179,3 +179,30 @@ int Account_Perst_Verify(char usrName[],char pwd[]){
 
     return 0;
 }
+
+
+int Account_Perst_FetchByName(char* username,account_t* user){
+    FILE *fp;
+    account_t buf;
+    int flag = 0;
+
+    if((fp = fopen(ACCOUNT_DATA_FILE,"rb+")) == NULL){
+        fprintf(stderr,"error:%s does not exist.\n",ACCOUNT_DATA_FILE);
+        return 0;
+    }
+
+    while(!feof(fp)){
+        if(fread(&buf, sizeof(account_t), 1, fp)){
+            if(strcmp(username,buf.username) == 0){
+                *user = buf;
+                flag = 1;
+                break;
+            }
+        }
+    }
+
+    fclose(fp);
+
+    return flag;
+
+}

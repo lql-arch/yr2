@@ -4,16 +4,16 @@
 #include "../Persistence/Creat_Ticket_Persist.h"
 #include <stdio.h>
 //添加新订单信息
-int Sale_Srv_Add(const sale_t *data)
+int Sale_Srv_Add(sale_t *data)
 {
 	return Sale_Perst_Insert(data);
 }
 
-int Ticket_Srv_Modify(const ticket_t *data){
+int Ticket_Srv_Modify(ticket_t *data){
 	return Ticket_Perst_Update(data);
 }
 
-int Ticket_Srv_FetchBySchID(int ID, ticket_list_t *list){
+int Ticket_Srv_FetchBySchID(int ID, ticket_list_t list){
 	return Ticket_Srv_SelBySchID(ID,list);
 }
 

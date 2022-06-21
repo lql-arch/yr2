@@ -34,7 +34,7 @@ int Seat_Perst_DeleteAllByRoomID(int roomID);
 
 //标识符：TTMS_SCU_Seat_Perst_SelByRoomID
 //功能：根据演出厅ID从文件中载入所有座位
-int Seat_Perst_SelectByRoomID(seat_list_t* list, int roomID);
+int Seat_Perst_SelectByRoomID(seat_list_t list, int roomID);
 
 //标识符：TTMS_SCU_Studio_Perst_SelByID
 //功能：根据ID从文件中载入座位 

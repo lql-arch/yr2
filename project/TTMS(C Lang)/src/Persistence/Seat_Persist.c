@@ -36,7 +36,7 @@ static const char SEAT_KEY_NAME[] = "Seat";
 */ 
 int Seat_Perst_Insert(seat_t *data) {   
 	assert(NULL!=data);
-	FILE *fp = fopen(SEAT_DATA_FILE, "ab");
+	FILE *fp = fopen(SEAT_DATA_FILE, "ab+");
 	int rtn = 0;
 
 	if (NULL == fp)
@@ -44,8 +44,9 @@ int Seat_Perst_Insert(seat_t *data) {
 		printf("无法打开文件 %s!\n", SEAT_DATA_FILE);
 		return 0;
 	}
+    printf("%d %d %d\n",data->id,data->column,data->row);
 
-	rtn = fwrite(data, sizeof(seat_t), 1, fp);
+	rtn = (int)fwrite(data, sizeof(seat_t), 1, fp);
 
 	fclose(fp);
 	return rtn;
@@ -294,20 +295,23 @@ int Seat_Perst_SelectAll(seat_list_t list) {
 参数说明：第一个参数list为seat_list_t类型，表示将要载入的座位链表头指针，第二个参数roomID为整型，表示演出厅ID。
 返 回 值：整型，表示成功载入了演出厅座位的个数。
 */
-int Seat_Perst_SelectByRoomID(seat_list_t* list, int roomID)
+int Seat_Perst_SelectByRoomID(seat_list_t list, int roomID)
 {
-    List_Init(*list,seat_node_t);
+//    List_Init(list,seat_node_t);
+    seat_node_t *newNode;
 	seat_t data;
 	int recCount = 0;
 
-	FILE *fp = fopen(SEAT_DATA_FILE, "rb+");
-	if (NULL == fp)
-	{
-		printf("无法打开文件 %s!\n", SEAT_DATA_FILE);
-		return 0;
-	}
+    assert(NULL != list);
 
-    List_Free(*list,seat_node_t);
+    List_Free(list,seat_node_t);
+
+    FILE *fp = fopen(SEAT_DATA_FILE, "rb");
+    if (NULL == fp)
+    {
+        printf("无法打开文件 %s!\n", SEAT_DATA_FILE);
+        return 0;
+    }
 
 	while (!feof(fp))
 	{
@@ -315,9 +319,13 @@ int Seat_Perst_SelectByRoomID(seat_list_t* list, int roomID)
 		{ 
 			if (data.roomID == roomID)  //若座位是本放映厅的座位，则读出
 			{
-                seat_node_t *newNode = (seat_node_t*) malloc(sizeof(seat_node_t));
-				newNode->data = data;
-				List_AddTail(*list, newNode);
+                newNode = (seat_node_t*) malloc(sizeof(seat_node_t));
+                if (!newNode) {
+                    printf("Warning, Memory OverFlow!!!\n Cannot Load more Data into memory!!!\n");
+                    break;
+                }
+                newNode->data = data;
+				List_AddTail(list, newNode);
 				recCount++;
 			}
 		} 

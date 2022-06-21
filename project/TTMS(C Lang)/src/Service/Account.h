@@ -34,10 +34,10 @@ int Account_Srv_Verify(char usrName[],char pwd[]);
 //验证是否存在用户
 
 //添加新用户
-int Account_Srv_Add(const account_t *data);
+int Account_Srv_Add(account_t *data);
 
 //修改系统用户的密码
-int Account_Srv_Insert(const account_t *data);
+int Account_Srv_Insert(account_t *data);
 
 //根据用户id删除系统用户
 int Account_Srv_DelByID(int usrID);
@@ -47,5 +47,7 @@ int Account_Srv_FetchAll(account_list_t list);
 
 //根据用户名获取系统用户指针
 account_node_t* Account_Srv_FindByUsrName(account_list_t list,char usrName[]);
+
+int Account_Srv_FetchByName(char* username,account_t* user);
 
 #endif //TTMS_C_LANG__ACCOUNT_H

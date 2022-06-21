@@ -99,6 +99,13 @@ void Seat_UI_MgtEntry(int roomID)
 	List_Init(list, seat_node_t);
 	//选择放映厅的所有座位
 	seatCount = Seat_Srv_FetchByRoomID(list, roomID);
+
+//    List_ForEach(list,p)
+//    {
+//        printf("%d %d %d\n",p->data.id,p->data.column,p->data.row);
+//    }
+    printf("Seat:%d\n",seatCount);
+
 	do {
 
 #ifdef WIN32
@@ -109,11 +116,12 @@ void Seat_UI_MgtEntry(int roomID)
 #endif
 
 		printf("\n\t\t\t\t==================================================================\n");
-		printf("\n\t\t\t\t*************************  放映厅的座位  *************************\n");
+		printf("\n\t\t\t\t*************************  %s放映厅的座位  *************************\n",studioRec.name);
 		printf("\t\t\t\t%5c",' ');
 		for (i = 1; i <= studioRec.colsCount; i++) {
 			printf("%3d", i);
 		}
+
 		printf(
 				"\n\t\t\t\t------------------------------------------------------------------\n");
 		//显示数据

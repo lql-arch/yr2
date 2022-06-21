@@ -79,7 +79,7 @@ int Seat_Srv_DeleteAllByRoomID(int roomID){
 int Seat_Srv_FetchByRoomID(seat_list_t list, int roomID)
 {
     //根据演出厅ID载入座位
-	int SeatCount=Seat_Perst_SelectByRoomID(&list, roomID);
+	int SeatCount=Seat_Perst_SelectByRoomID(list, roomID);
 	//对座位链表排序
 
 	Seat_Srv_SortSeatList(list);
@@ -204,7 +204,7 @@ void Seat_Srv_AddToSoftedList(seat_list_t list, seat_node_t *node) {
          第二个参数row为整型，表示待获取座位的行号，第三个参数column为整型，表示待获取座位的列号。
 返 回 值：为seat_node_t指针，表示获取到的座位数据。
 */
-seat_node_t * Seat_Srv_FindByRowCol(seat_list_t list, int row, int column) {
+seat_node_t* Seat_Srv_FindByRowCol(seat_list_t list, int row, int column) {
     assert(NULL!=list);
 	seat_node_t *p;
 
@@ -213,6 +213,31 @@ seat_node_t * Seat_Srv_FindByRowCol(seat_list_t list, int row, int column) {
 			return p;
 	return NULL ;
 }
+
+int Seat_Srv_FindTheByRowCol(seat_t*buf,int row, int column){
+    FILE *fp;
+    seat_t data;
+    int recCount = 0;
+
+    if((fp = fopen("Seat.dat","rb+")) == NULL){
+        fprintf(stderr,"Error:Seat.dat 不存在.\n");
+        return 0;
+    }
+
+    while (!feof(fp)) {
+        if (fread(&data, sizeof(seat_t), 1, fp)) {
+            if(data.row == row && data.column == column){
+                *buf = data;
+                recCount++;
+                break;
+            }
+        }
+    }
+    return recCount;
+}
+
+
+
 /*
 函数功能：根据座位ID在链表中获取座位数据。
 参数说明：第一个参数list为seat_list_t类型，指向座位数据链表，第二个参数ID为整型，表示座位ID。

@@ -1,8 +1,13 @@
-//
-// Created by bronya on 22-6-20.
-//
+#pragma once
 
-#ifndef TTMS_C_LANG__SALESANALYSIS_UI_H
-#define TTMS_C_LANG__SALESANALYSIS_UI_H
+#include "../Common/common.h"
+#include "../Service/SalesAnalysis.h"
+#include "../Common/List.h"
+#include  <stdio.h> 
 
-#endif //TTMS_C_LANG__SALESANALYSIS_UI_H
+#define SALESANALYSIS_PAGE_SIZE 5
+
+void SalesAnalysis_UI_MgtEntry();
+
+
+void SalesAnalysis_UI_ShowList(salesanalysis_list_t list, Pagination_t paging);

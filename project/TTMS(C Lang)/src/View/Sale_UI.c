@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include <time.h>
 
 #include"../Service/Play.h"							//MgtEnt
 #include"../Service/Seat.h"
@@ -13,6 +14,7 @@
 #include "Schedule_UI.h"
 #include "../Service/Sale.h"
 #include "../Service/Seat.h"
+#include "Seat_UI.h"
 
 static const int SALESANALYSIS_PAGE_SIZE = 5;
 static const int PLAY_PAGE_SIZE = 5;
@@ -40,12 +42,12 @@ void Sale_UI_MgtEntry(void){
 	paging.totalRecords = Play_Srv_FetchAll(list);//调用函数获取总记录数
 	Paging_Locate_FirstPage(list, paging);//页面定位到链表第一页
 
+    while((ch = getchar()) != '\n')
+        continue;
 
 	char choice;
 	do{				//设置长度为83个字符
 
-//        while((ch = getchar()) != '\n')
-//            continue;
         setbuf(stdin,NULL);
 
         printf(
@@ -217,7 +219,7 @@ void Sale_UI_ShowScheduler(int id){
 		case 'T':
 			printf("\nPlease Input The Schedule_ID:");
 			scanf("%d",&tk_id);
-			Sale_UI_ShowTicket(tk_id,id);
+			Sale_UI_ShowTicket(tk_id);
 			break;
 
 		case 'p':
@@ -240,150 +242,212 @@ void Sale_UI_ShowScheduler(int id){
 }
 
 /*显示演出票界面*/
-void Sale_UI_ShowTicket(int scheduleID , int play_id){
-	schedule_t sch;
-	play_t pla;
-    studio_t studioRec;
-	seat_list_t sea;
-	ticket_list_t tic;
+void Sale_UI_ShowTicket(int schedule_id){
+    schedule_t schedule_buf;
+    Schedule_Srv_FetchByID(schedule_id,&schedule_buf);//根据演出计划id，找出演出计划的节点信息  演出计划理由剧目id
 
 
-	while(!Schedule_Srv_FetchByID(scheduleID,&sch))		//判断 演出计划ID 是否存在
-	{
-		printf("Schedule_ID is Wrong !\nRepeat:");
-		scanf("%d",&scheduleID);
-	}
+    ticket_list_t buf;//buf保存着某演出计划的所有票      票理由演出计划id
+    List_Init(buf,ticket_node_t);
+    ticket_list_t pos;
 
-    if(!Studio_Srv_FetchByID(sch.studio_id, &studioRec)){
-        fprintf(stdout,"Room does not exist!\n按下[Enter]返回.\n");
-        getchar();
-        return;
-    }
+    Pagination_t paging;
+    paging.offset = 0;
+    paging.pageSize = 5;
+    int i;
+    int choice;
 
-	if(!Seat_Srv_FetchByRoomID(sea , sch.studio_id)){
-        fprintf(stdout,"Studio_ID is Wrong !\n按下[Enter]返回.\n");
-        getchar();
-        return;
-    }
-
-	if(!Ticket_Srv_FetchBySchID(scheduleID,&tic)){
-        fprintf(stdout,"票务获取失败!\n按下[Enter]返回.\n");
-        getchar();
-        return;
-    }
-
-    printf("tic:\n");
-    ticket_node_t* pow ;
-    List_ForEach(tic,pow){
-        printf("%d %d %d\n",pow->data.id,pow->data.schedule_id,pow->data.seat_id);
-    }
+    seat_list_t flag;//flag保存演出计划的所有座位      座位里由演出计划id
+    List_Init(flag,seat_node_t);
+    Seat_Srv_FetchByRoomID(flag,schedule_buf.studio_id);//根据剧目id找到座位链表
 
 
-    char choice;
-     printf("              [R]返回上一页 						  [B]购票:");
-     scanf("%s",&choice);
-     if(choice == 'r' || choice == 'R'){
-         return ;
-     }
-     Sale_UI_SellTicket(tic, sea);
+    List_Init(buf,ticket_node_t);
+    paging.totalRecords=Ticket_Srv_FetchBySchID(schedule_id,buf);
+    Paging_Locate_FirstPage(buf,paging);
+
+//    ticket_node_t *p;
+//    List_ForEach(buf,p){
+//        printf("%d %d\n",p->data.status,p->data.id);
+//    }
 
 
-	List_Destroy(tic, ticket_node_t);
-	List_Destroy(sea, seat_node_t);
+    do {
+#ifdef WIN32
+        system("cls");//清屏
+#endif
+#ifdef linux
+        system("clear");//清屏
+#endif
+
+        printf(
+                "\n=======================================================\n");
+        printf(
+                "********************** 票的信息 ***********************\n");
+        printf("%5s  %5s  %5s  %5s  %5s","票id","演出计划id","座位id","价格","状态\n");
+        printf(
+                "-------------------------------------------------------\n");
+        Paging_ViewPage_ForEach(buf, paging, ticket_node_t, pos, i){
+            printf("%5d  %5d  %7d  %5d  ",pos->data.id,pos->data.schedule_id,pos->data.seat_id,pos->data.price);
+            printf("%5s\n",(pos->data.status == 0 ? "预售" : (pos->data.status == 1 ? "已售" : "待售")));
+        }
+
+
+        printf(
+                "------- 共:%2d条 --------------------- 页数 :%2d/%2d ----\n",
+                paging.totalRecords, Pageing_CurPage(paging),
+                Pageing_TotalPages(paging));
+
+        printf("\n*******************************************************\n");
+        printf("[1]购票|[2]查看seat|[0]返回|[3]上一页|[4]下一页\n");
+        printf("=======================================================\n");
+
+
+
+        fflush(stdin);
+        printf("请输入：");
+        fflush(stdin);
+        scanf("%d", &choice);
+        fflush(stdin);
+
+        switch(choice)
+        {
+            case 1:
+                if(!Sale_UI_SellTicket(buf,flag)){
+                    fprintf(stderr,"Error:Sell ticket failed.\n");
+                }else{
+                    paging.totalRecords=Ticket_Srv_FetchBySchID(schedule_id,buf);
+                    List_Paging(buf,paging,ticket_node_t);
+                }
+                break;
+            case 2:
+                Seat_UI_MgtEntry(schedule_buf.studio_id);
+                break;
+            case 3://system("clear");
+                if (!Pageing_IsFirstPage(paging)) {
+                    Paging_Locate_OffsetPage(buf, paging, -1, ticket_node_t);
+                }
+                break;
+            case 4://system("clear");
+                if (!Pageing_IsLastPage(paging)) {
+                    Paging_Locate_OffsetPage(buf, paging, 1, ticket_node_t);
+                }
+                break;
+        }
+    }while(choice != 0);
+    List_Destroy(flag, seat_node_t);
+    List_Destroy(buf, ticket_node_t);
 }
 
 
 /*售票界面*/
 int Sale_UI_SellTicket(ticket_list_t tickList,seat_list_t seatList){
+    int x,y;
+    printf("输入你想要买的票的行号：");
+    scanf("%d",&x);
+    printf("输入列号：");
+    scanf("%d",&y);
+    printf("\n");
 
-	int row,col;
-	printf("Please Input The   row    About This Seat: ");
-	scanf("%d",&row);
-	printf("Please Input The   col    About This Seat: ");
-	scanf("%d",&col);
-    while (getchar() != '\n')
-        continue;
-
-    schedule_t sch;
-    seat_node_t* seat;
-    ticket_node_t* ticket;
-    sale_t sale;
-    seat_t tseat;
-    ticket_t tticket;
-    Schedule_Srv_FetchByID(tickList->next->data.schedule_id, &sch); //获取安排信息
-    Ticket_UI_ListBySch(&sch,tickList,seatList);
-
-    if ((seat = Seat_Srv_FindByRowCol(seatList, row, col)) == NULL || seat->data.status != SEAT_GOOD)
-    {
-		printf("Wrong ROW and COL !\n");
-        while (getchar() != '\n')
-            continue;
-        return 0;
-	}
-
-    if (seat->data.status == SEAT_NONE)
-    {
-        printf("Not For Useing !");
-        while (getchar() != '\n')
-            continue;
+    seat_node_t *b;
+    if(!(b = Seat_Srv_FindByRowCol(seatList,x,y))){
+        printf("该座位不存在!");
         return 0;
     }
 
-
-    if (seat->data.status == SEAT_BROKEN)
-    {
-        printf("Seat Broken !");
-        while (getchar() != '\n')
-            continue;
+    ticket_t flag;
+    //根据座位id，找到票的信息，，flag存储票信息链表节点
+    if(!Ticket_Srv_FetchByID(b->data.id,&flag)){
+        printf("该票不存在！\n");
         return 0;
+    }else
+    {
+        printf("找到该票！\n");
     }
 
-    if ((ticket = Ticket_Srv_FetchBySeatID(tickList, seat->data.id)) == NULL)
+    if(flag.status==0)
     {
-        printf("Get Ticket Failed");
-        while (getchar() != '\n')
-            continue;
+        printf("该票等待售出！\n");
+
+        flag.status = 1;
+
+        if(Ticket_Srv_Modify(&flag)){
+            printf("Ticket_modify success!\n");
+        }else{
+            return 0;
+        }
+
+        FILE *fp;
+        ticket_t rec;
+        if((fp = fopen("Ticket.dat","rb+")) == NULL){
+            printf("Open FILE Failed !\n");
+            return 0;
+        }
+        while(!feof(fp)){//指针  没有  指到 FILE 末尾的
+            fread(&rec, sizeof(ticket_t), 1, fp);
+            if(rec.id == flag.id){
+                printf("%d %d\n",rec.status,rec.id);
+            }
+        }
+        fclose(fp);
+
+
+        sale_t buf;//保存这次售票的销售记录
+
+        long key = EntKey_Perst_GetNewKeys("Sale", 1); //获取主键
+
+        if(key<=0) {
+            fprintf(stderr,"Error:key.\n");
+            return 0;
+        }
+        buf.id = key;
+        printf("\n");
+        printf("输入你的id");
+        scanf("%d",&buf.user_id);
+
+        buf.ticket_id = flag.id;
+
+        struct tm *local;
+        time_t t;
+
+        t=time(&t);
+        local=localtime(&t);  //当前日期
+
+        printf("%d年%d月%d日\n",local->tm_year+1900,local->tm_mon+1,local->tm_mday);
+        buf.date.year=local->tm_year+1900;
+        buf.date.month=local->tm_mon+1;
+        buf.date.day=local->tm_mday;
+
+        printf("%d时%d分%d秒\n",local->tm_hour,local->tm_min,local->tm_sec);
+        buf.time.hour=local->tm_hour;
+        buf.time.minute=local->tm_min;
+        buf.time.second=local->tm_sec;
+        buf.type=1;//买票
+
+        if(Sale_Srv_Add(&buf)){
+            printf("Sale_add success!\n");
+        }else{
+            flag.status = 0;
+            Ticket_Srv_Modify(&flag);
+            return 0;
+        }
+
+
+        return 1;
+    }
+    else if(flag.status==1)
+    {
+        printf("该票已售出！");
         return 0;
     }
-
-    if (TICKET_SOLD == ticket->data.status)
+    else
     {
-        printf("Ticket has been Sold !");
-        while (getchar() != '\n')
-            continue;
+        printf("该票已被预定，不可购买！");
+
         return 0;
     }
-
-    sale.date.year = DateNow().year; //设置销售数据
-    sale.date.day = DateNow().day ;
-    sale.date.month = DateNow().month;
-
-    sale.time.second = TimeNow().second;
-    sale.time.minute = TimeNow().minute;
-    sale.time.hour = TimeNow().hour;
-
-    sale.user_id = User.id;
-    sale.id = EntKey_Srv_CompNewKey("Sale");
-    sale.ticket_id = ticket->data.id;
-    sale.value = ticket->data.price;
-    sale.type = SALE_SELL;
-    while (getchar() != '\n')
-        continue;
-
-    ticket->data.status = TICKET_SOLD;
-
-    tticket = ticket->data;
-
-    Ticket_Srv_Modify(&tticket);
-
-    Sale_Srv_Add(&sale);
-    printf("Ticket Sell Success!");
-    Ticket_UI_ShowTicket(ticket->data.id);
-    while (getchar() != '\n')
-        continue;
-    return 1;
-
 }
+
 
 /*退票界面*/
 void Sale_UI_ReturnTicket(void){
@@ -408,7 +472,7 @@ void Sale_UI_ReturnTicket(void){
 	play_t play;
 	while (Play_Srv_FetchByID(play_id, &play) == 0)
 	{
-		printf("Wrong Play_ID ! Reapeat Again :");
+		printf("Wrong Play_ID ! Repeat Again :");
 		scanf("%d", &play_id);
 	}
 
@@ -435,7 +499,7 @@ void Sale_UI_ReturnTicket(void){
 	schedule_t schedule;
 	while (Schedule_Srv_FetchByID(schedule_id, &schedule) == 0)
 	{
-		printf("Wrong Schedule_ID ! Reapeat Again :");
+		printf("Wrong Schedule_ID ! Repeat Again :");
 		scanf("%d", &schedule_id);
 	}
 	List_Destroy(slist, schedule_node_t);
@@ -452,6 +516,7 @@ void Sale_UI_ReturnTicket(void){
 
 	int ticket_id;
     char choice;
+    printf("Your ticket_id:");
 	scanf("%d",&ticket_id);
 	while (Ticket_Srv_FetchByID(ticket_id, &ticket) == 0 || ticket.status == TICKET_AVL)
 	{
@@ -496,9 +561,10 @@ void Sale_UI_ReturnTicket(void){
 
             Sale_Srv_Add(&data);
             Ticket_Srv_Modify(&ticket);
-            printf("Retfund Success !\n");
+            printf("Refund Success !\n");
 
             List_Destroy(tlist, ticket_node_t);
+            setbuf(stdin,NULL);
             return;
             break;
         }

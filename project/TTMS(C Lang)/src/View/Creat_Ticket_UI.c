@@ -333,16 +333,16 @@ void Ticket_UI_ShowList(ticket_list_t ticket, Pagination_t paging)
     int i = 0;
     ticket_node_t* node;
     printf("\n\t\t\t\t==========================订票信息==============================\n");
-    printf("\t\t\t\t%4s\t%12s\t%8s\t%4s\n", "ID", "演出计划ID", "座位ID", "价格");
+    printf("\t\t\t\t%4s\t%12s  %8s  %4s\n", "ID", "演出计划ID", "座位ID", "价格");
     Paging_ViewPage_ForEach(list, paging, ticket_node_t, node, i)
     {
         if(node->data.status == TICKET_SOLD)
-        printf("\t\t\t\t%4d\t%12d\t%8d\t%4d\n",
+        printf("\t\t\t\t%4d\t%10d  %8d  %4d\n",
         node->data.id, node->data.schedule_id, node->data.seat_id, node->data.price);
          }
     printf("\t\t\t\t================================================================\n");
     List_Destroy(list, ticket_node_t);
-    return;
+
 }
 
 void Ticket_UI_ListBySch(const schedule_t *sch, ticket_list_t tickList, seat_list_t seatList)

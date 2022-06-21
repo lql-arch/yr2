@@ -4,7 +4,9 @@
 #include "../Persistence/Sale_Persist.h"
 #include "../Persistence/Account_Persist.h"
 #include <stdio.h>
-int StaSales_Srv_CompSaleVal(int usrID, ttms_date_t stDate, ttms_date_t endDate){
+
+
+int StaSales_Srv_CompSaleVal(int usrID, user_date_t stDate, user_date_t endDate){
 	int amount=0;//´æ·ÅÏúÊÛ¶î
 	sale_list_t saleList;
 	sale_list_t p;

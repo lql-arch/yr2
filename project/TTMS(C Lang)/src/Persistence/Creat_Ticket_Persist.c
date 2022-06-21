@@ -27,7 +27,7 @@ int Ticket_Perst_Insert(int schedule_id,int studio_id){
     List_Init(list,seat_node_t);
 
 
-    if((fp = fopen(TICKET_DATA_FILE,"ab")) == NULL) {
+    if((fp = fopen(TICKET_DATA_FILE,"ab+")) == NULL) {
         printf("Failed:open %s", TICKET_DATA_FILE);
         return 0;
     }
@@ -61,11 +61,14 @@ int Ticket_Perst_Insert(int schedule_id,int studio_id){
         data.schedule_id = schedule_id;
         data.seat_id = p->data.id;
         data.status = 0;
+        printf("%d %d %d\n",data.id,data.seat_id,data.schedule_id);
         fwrite(&data,sizeof(ticket_t),1,fp);
         seat_num++;
     }
-    fclose(fp);
 
+
+
+    fclose(fp);
 
     return seat_num;
 }
@@ -120,7 +123,7 @@ int Ticket_Perst_SelByID(int id, ticket_t *buf)
     FILE *fp = fopen(TICKET_DATA_FILE, "rb+");
     if (NULL == fp)
     {
-        printf("ERROR.\n");
+        printf("%s ERROR.\n",TICKET_DATA_FILE);
         return 0;
     }
 

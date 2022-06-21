@@ -48,7 +48,7 @@ void Schedule_UI_MgtEntry(int play_id){
                 "------------------------------------------------------------------\n");
         //显示数据
         Paging_ViewPage_ForEach(head, paging, schedule_node_t, pos, i){
-            printf("%8d  %5d  %10d  %02d-%02d-%02d  %04d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
+            printf("%8d  %5d  %10d  %02d:%02d:%02d  %04d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
                    pos->date.time.hour,pos->date.time.minute,pos->date.time.second,pos->date.date.hour,pos->date.date.minute,pos->date.date.second, pos->date.seat_count);
         }
 
@@ -130,7 +130,7 @@ void Schedule_UI_MgtEntry(int play_id){
                 break;
             case 't':
             case 'T':
-                printf("Input the ID:");
+                printf("Input the schedule_ID:");
                 scanf("%d", &id);
                 while((ch = getchar()) != '\n')
                     continue;
@@ -277,6 +277,12 @@ void Schedule_UI_ShowList(schedule_list_t list, Pagination_t paging)
     Play_Srv_FetchByID(list->next->date.play_id, &play);
 
     do{
+#ifdef linux
+        system("clear");
+#endif
+#ifdef WIN32
+        system("cls");
+#endif
         printf("\n\t\t\t\t==================================================================\n");
         printf("\t\t\t\t\t\t\t*********演出计划*********\n");
         printf("\t\t\t\t------------------------------------------------------------------\n");
@@ -329,13 +335,12 @@ int Schedule_UI_Query(char *play_name)
     List_Init(list_p,play_node_t);
     List_Init(list_s,schedule_node_t);
 
-//?????????????
+
     Play_Srv_FetchByName(list_p,play_name);
 
     play_node_t* p;
     List_ForEach(list_p,p)
     {
-//???????????????????????????????list_s??
         Schedule_Srv_FetchByPlay(p->date.id,list_s);
     }
 
@@ -346,7 +351,7 @@ int Schedule_UI_Query(char *play_name)
     {
         len++;
     }
-//?????????
+
     schedule_node_t *pos;
     Pagination_t paging;
 
@@ -360,28 +365,32 @@ int Schedule_UI_Query(char *play_name)
     printf(
             "\n==================================================================\n");
     printf(
-            "********************** ????????? **********************\n");
-    printf("%8s %8s  %8s  %8s  %8s %8s\n", "??????ID", "??????ID", "?????ID",
-           "???????", "??????","??λ??");
+            "********************** Play  List **********************\n");
+    printf("%8s  %5s  %10s  %10s  %8s  %5s\n", "play_id", "ID", "studio_id",
+           "time", "date","seat_count");
     printf(
             "------------------------------------------------------------------\n");
 
     Paging_ViewPage_ForEach(list_s, paging, schedule_node_t, pos, i){
-        printf("%8d %8d  %8d  %d/%d/%d  %d/%d/%d %8d \n", pos->date.id,
-               pos->date.play_id, pos->date.studio_id, pos->date.date.hour,
-               pos->date.date.minute,pos->date.date.second,pos->date.time.hour,
-               pos->date.time.minute,pos->date.time.second,pos->date.seat_count);
+        printf("%8d  %5d  %10d  %02d:%02d:%02d  %04d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
+               pos->date.time.hour,pos->date.time.minute,pos->date.time.second,pos->date.date.hour,pos->date.date.minute,pos->date.date.second, pos->date.seat_count);
+
     }
 
     printf(
-            "------- ??:%2d? ----------------------- ??? :%2d/%2d ----\n",
+            "------- Total Records:%2d ----------------------- Page :%2d/%2d ----\n",
             paging.totalRecords, Pageing_CurPage(paging),
             Pageing_TotalPages(paging));
     printf(
             "******************************************************************\n");
     setbuf(stdin,NULL);
     getchar();
+#ifdef linux
     system("clear");
+#endif
+#ifdef WIN32
+    system("cls");
+#endif
     return 1;
 }
 
@@ -402,24 +411,29 @@ void Schedule_UI_ListAll(void)
     paging.totalRecords = Schedule_Srv_FetchAll(head);
     Paging_Locate_FirstPage(head, paging);
     do {
+#ifdef linux
+        system("clear");
+#endif
+#ifdef WIN32
+        system("cls");
+#endif
         printf(
                 "\n==========================================================\n");
         printf(
-                "********************** ????????? **********************\n");
-        printf("%8s %8s  %8s  %8s  %8s %8s\n", "??????ID", "??????ID", "?????ID",
-               "???????", "??????","??λ??");
+                "********************** Play  List **********************\n");
+        printf("%8s  %5s  %10s  %10s  %8s  %5s\n", "play_id", "ID", "studio_id",
+               "time", "date","seat_count");
         printf(
                 "----------------------------------------------------------\n");
 
         Paging_ViewPage_ForEach(head, paging, schedule_node_t, pos, i){
-            printf("%8d %8d  %8d  %d/%d/%d  %d/%d/%d %8d \n", pos->date.id,
-                   pos->date.play_id, pos->date.studio_id, pos->date.date.hour,
-                   pos->date.date.minute,pos->date.date.second,pos->date.time.hour,
-                   pos->date.time.minute,pos->date.time.second,pos->date.seat_count);
+            printf("%8d  %5d  %10d  %02d:%02d:%02d  %04d-%02d-%02d  %5d\n", pos->date.play_id,pos->date.id,pos->date.studio_id,
+                   pos->date.time.hour,pos->date.time.minute,pos->date.time.second,pos->date.date.hour,pos->date.date.minute,pos->date.date.second, pos->date.seat_count);
+
         }
 
         printf(
-                "------- ??:%2d? ------------------------- ??? :%2d/%2d ----\n",
+                "------- Total Records:%2d ------------------------- Page :%2d/%2d ----\n",
                 paging.totalRecords, Pageing_CurPage(paging),
                 Pageing_TotalPages(paging));
         printf(
@@ -440,9 +454,7 @@ void Schedule_UI_ListAll(void)
         switch (choice) {
             case 'Q':
             case 'q':
-
-                system("clear");
-                printf("??????????????????:");
+                printf("Input your play_name:");
                 scanf("%s", play_name);
                 if (Schedule_UI_Query(play_name))
                 {

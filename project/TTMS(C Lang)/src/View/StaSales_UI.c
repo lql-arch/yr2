@@ -114,7 +114,7 @@ void StaSales_UI_Clerk()
 
     account_t user;//存储用户信息
     int i;
-    i=Account_Srv_FetchByName(username,&user);
+    i = Account_Srv_FetchByName(username,&user);
     id=user.id;
     if(i==0)
     {

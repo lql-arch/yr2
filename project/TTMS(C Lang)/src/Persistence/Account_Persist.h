@@ -24,4 +24,6 @@ int Account_Perst_SelectAll(account_list_t list);
 
 int Account_Perst_Verify(char usrName[],char pwd[]);
 
+int Account_Perst_FetchByName(char* username,account_t* user);
+
 #endif //TTMS_C_LANG__ACCOUNT_PERSIST_H
