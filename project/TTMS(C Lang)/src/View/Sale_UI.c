@@ -266,12 +266,6 @@ void Sale_UI_ShowTicket(int schedule_id){
     paging.totalRecords=Ticket_Srv_FetchBySchID(schedule_id,buf);
     Paging_Locate_FirstPage(buf,paging);
 
-//    ticket_node_t *p;
-//    List_ForEach(buf,p){
-//        printf("%d %d\n",p->data.status,p->data.id);
-//    }
-
-
     do {
 #ifdef WIN32
         system("cls");//清屏
@@ -377,21 +371,6 @@ int Sale_UI_SellTicket(ticket_list_t tickList,seat_list_t seatList){
             return 0;
         }
 
-        FILE *fp;
-        ticket_t rec;
-        if((fp = fopen("Ticket.dat","rb+")) == NULL){
-            printf("Open FILE Failed !\n");
-            return 0;
-        }
-        while(!feof(fp)){//指针  没有  指到 FILE 末尾的
-            fread(&rec, sizeof(ticket_t), 1, fp);
-            if(rec.id == flag.id){
-                printf("%d %d\n",rec.status,rec.id);
-            }
-        }
-        fclose(fp);
-
-
         sale_t buf;//保存这次售票的销售记录
 
         long key = EntKey_Perst_GetNewKeys("Sale", 1); //获取主键
@@ -431,7 +410,6 @@ int Sale_UI_SellTicket(ticket_list_t tickList,seat_list_t seatList){
             Ticket_Srv_Modify(&flag);
             return 0;
         }
-
 
         return 1;
     }

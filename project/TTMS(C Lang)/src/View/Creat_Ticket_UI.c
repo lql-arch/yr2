@@ -212,7 +212,7 @@ int Ticket_UI_ShowTicket(int ID)
         system("clear");
 #endif
         Play_UI_ShowList(playList, paging);
-        printf("\t\t\t\t\t[E]选择剧目 ?[P]上一页 ?[N]下一页 ?[R]退出\n\t\t\t\t");
+        printf("\t\t\t\t\t[E]选择剧目 [P]上一页 [N]下一页 [R]退出\n\t\t\t\t");
         choice = toupper(getchar());
         while (getchar() != '\n')
             continue;
