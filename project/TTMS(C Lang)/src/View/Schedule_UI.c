@@ -165,13 +165,13 @@ int Schedule_UI_Add(int play_id){
         printf("---------------------------------------------------------------\n");
         printf("Projection Room:");
         scanf("%d", &(t.studio_id));
-        do{
+        while(!Studio_Srv_FetchByID(t.studio_id,&buf1)){
             fprintf(stderr,"Error:%d no exist.\n",t.studio_id);
-            printf("Projection Room:");
+            printf("Stdio_id:");
             scanf("%d", &(t.studio_id));
-        }while(!Studio_Srv_FetchByID(t.studio_id,&buf1));
-        printf("Date of screening(year-month-second):");
-        scanf("%d-%d-%d",&t.date.hour,&t.date.minute,&t.date.second);
+        }
+        printf("Date of screening(year:month:day):");
+        scanf("%d:%d:%d",&t.date.hour,&t.date.minute,&t.date.second);
         printf("Time of screening(hour-minute-second):");
         scanf("%d-%d-%d",&t.time.hour,&t.time.minute,&t.time.second);
         t.seat_count = buf1.seatsCount;
@@ -222,26 +222,26 @@ int Schedule_UI_Modify(int id){
     printf("Schedule ID:%d\n", t.id);
     printf("Play_id[%d]:", t.play_id);
     scanf("%d",&t.play_id);
-    do{
-        fprintf(stderr,"Error:%d no exist.\n");
-        printf("Projection Room:");
-        scanf("%d", &(t.studio_id));
-    }while(!Play_Srv_FetchByID(t.studio_id,&buf2));
+    while(play_id != t.play_id){
+        fprintf(stderr,"Error:%d does not exist.\n",t.play_id);
+        printf("Play_id:");
+        scanf("%d", &(t.play_id));
+    }
     printf("studio_id[%d]:",t.studio_id);
     scanf("%d", &(t.studio_id));
-    do{
-        fprintf(stderr,"Error:%d no exist.\n");
-        printf("Projection Room:");
+    while(!Studio_Srv_FetchByID(t.studio_id,&buf1)){
+        fprintf(stderr,"Error:%d no exist.\n",t.studio_id);
+        printf("Studio_id:");
         scanf("%d", &(t.studio_id));
-    }while(!Studio_Srv_FetchByID(t.studio_id,&buf1));
-    printf("Date of screening(year-month-second):");
+    }
+    printf("Date of screening(year-month-day):");
     scanf("%d-%d-%d",&t.date.hour,&t.date.minute,&t.date.second);
-    printf("Time of screening(hour-minute-second):");
-    scanf("%d-%d-%d",&t.time.hour,&t.time.minute,&t.time.second);
+    printf("Time of screening(hour:minute:second):");
+    scanf("%d:%d:%d",&t.time.hour,&t.time.minute,&t.time.second);
     t.seat_count = buf1.seatsCount;
     printf("=======================================================\n");
 
-    if (Schedule_Srv_Modify(&t, play_id)) {
+    if (Schedule_Srv_Modify(&t)) {
         rtn = 1;
         printf("The play data updated successfully!\nPress [Enter] key to return!\n");
     } else

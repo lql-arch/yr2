@@ -117,66 +117,30 @@ int Schedule_Perst_Insert(schedule_t *date){
 }
 
 //功能：更新演出计划
-int Schedule_Perst_Update(schedule_t *data,int play_id){
-//    int flag = 0;
-//    int new_id = data->play_id;
-//    int old_id = play_id;
-//
-//    if(new_id != old_id) {
-//        Create_File_Name((char) new_id);
-//    }
-//    if(Schedule_Perst_Insert(data)){
-//        flag ++;
-//    }else{
-//        return 0;
-//    }
-//    if(new_id != old_id) {
-//        Create_File_Name((char) old_id);
-//    }
-//    if(Schedule_Perst_RemByID(data->id)){
-//        flag ++;
-//    }else {
-//        return 0;
-//    }
-//    return flag;
-
-    if(rename(SCHEDULE_DATA_FILE, SCHEDULE_DATA_TEMP_FILE)<0){
-        printf("Cannot open file %s!\n", SCHEDULE_DATA_FILE);
-        return 0;
-    }
-
-    FILE *fpSour, *fpTarg;
-    fpSour = fopen(SCHEDULE_DATA_TEMP_FILE, "rb");
+int Schedule_Perst_Update(schedule_t *data){
+    FILE *fpSour;
+    fpSour = fopen(SCHEDULE_DATA_FILE, "rb+");
     if (NULL == fpSour ){
-        printf("Cannot open file %s!\n", SCHEDULE_DATA_TEMP_FILE);
-        return 0;
-    }
-
-    fpTarg = fopen(SCHEDULE_DATA_FILE, "wb");
-    if ( NULL == fpTarg ) {
         printf("Cannot open file %s!\n", SCHEDULE_DATA_FILE);
         return 0;
     }
-
 
     schedule_t buf;
 
     int found = 0;
     while (!feof(fpSour)) {
         if (fread(&buf, sizeof(schedule_t), 1, fpSour)) {
-            if (play_id == buf.id) {
+            if (data->id == buf.id) {
                 found = 1;
-                continue;
+                fseek(fpSour,-((int)sizeof(schedule_t)),SEEK_CUR);
+                fwrite(data, sizeof(schedule_t), 1, fpSour);
+                break;
             }
-            fwrite(&buf, sizeof(schedule_t), 1, fpTarg);
         }
     }
 
-    fclose(fpTarg);
     fclose(fpSour);
 
-    //删除临时文件
-    remove(SCHEDULE_DATA_TEMP_FILE);
     return found;
 }
 

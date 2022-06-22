@@ -36,7 +36,7 @@ int Schedule_Srv_FetchByPlay(int play_id,schedule_list_t buf);
 int Schedule_Srv_Add(schedule_t *p);
 
 //修改演出计划服务
-int Schedule_Srv_Modify(schedule_t *data, int id);
+int Schedule_Srv_Modify(schedule_t *data);
 
 //根据id删除演出计划服务
 int Schedule_srv_DeleteByID(int id);

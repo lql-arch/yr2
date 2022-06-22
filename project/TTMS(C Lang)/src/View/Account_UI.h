@@ -24,4 +24,9 @@ int slg(account_t* t);
 
 void reg();
 
+#ifdef linux
+    int getch(void);
+#endif
+
+
 #endif //TTMS_C_LANG__ACCOUNT_UI_H

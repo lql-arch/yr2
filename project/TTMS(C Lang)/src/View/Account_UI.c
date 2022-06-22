@@ -10,6 +10,35 @@
 
 #define ACCOUNT_PAGE_SIZE 5;
 
+#ifdef linux
+    #include <termio.h>
+    int getch() {
+        struct termios tm, tm_old;
+        int fd = 0, ch;
+
+        if (tcgetattr(fd, &tm) < 0) {//保存现在的终端设置
+            return -1;
+        }
+
+        tm_old = tm;
+        cfmakeraw(&tm);//更改终端设置为原始模式，该模式下所有的输入数据以字节为单位被处理
+        if (tcsetattr(fd, TCSANOW, &tm) < 0) {//设置上更改之后的设置
+            return -1;
+        }
+
+        ch = getchar();
+        if (tcsetattr(fd, TCSANOW, &tm_old) < 0) {//更改设置为最初的样子
+            return -1;
+        }
+
+        return ch;
+    }
+#endif
+#ifdef WIN32
+    #include <conio.h>
+#endif
+
+
 void Account_UI_MgtEntry(int argc,char* name)
 {
     int id,i;
@@ -406,7 +435,19 @@ int slg(account_t* ans){
 
     while (i <= 3) {
         printf("请输入密码：");
-        scanf("%s",t.password);
+        while((ch = getch()) != '\n'){
+            if(ch == '\r')
+                break;
+            if(ch == '\b'){
+                printf("\b \b");
+                count--;
+            }else{
+                printf("*");
+                t.password[count++] = ch;
+            }
+        }
+        t.password[count] = '\0';
+        //scanf("%s",t.password);
 
         if (Account_Srv_Verify(t.username, t.password)) {
             list = Account_Srv_FindByUsrName(head,t.username);
@@ -438,3 +479,4 @@ void reg(){
 
     getchar();
 }
+

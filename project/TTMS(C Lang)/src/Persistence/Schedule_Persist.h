@@ -16,7 +16,7 @@ int Schedule_Perst_SeletByPlay(int id,schedule_list_t buf);
 int Schedule_Perst_Insert(schedule_t *p);
 
 //功能：更新演出计划
-int Schedule_Perst_Update(schedule_t *data,int play_id);
+int Schedule_Perst_Update(schedule_t *data);
 
 //功能：根据id去除演出计划
 int Schedule_Perst_RemByID(int ID);

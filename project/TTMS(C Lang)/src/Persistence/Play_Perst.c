@@ -82,7 +82,7 @@ int Play_perst_Update(play_t *play){
     while(!feof(fp)){
         if(fread(&buf, sizeof(play_t), 1, fp)){
             if(buf.id == play->id){
-                fseek(fp,-(int)sizeof(play_t),SEEK_CUR);
+                fseek(fp,-((int)sizeof(play_t)),SEEK_CUR);
                 fwrite(play, sizeof(play_t), 1, fp);
                 flag = 1;
                 break;
