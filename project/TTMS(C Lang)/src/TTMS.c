@@ -29,7 +29,7 @@ int main(void) {
     account_t t;
     GetUser(&t);
 
-    Account_Srv_InitSys();//tmp_adminÄ¬ÈÏ666666
+    Account_Srv_InitSys();//tmp_adminÄ¬ÈÏ123456
 
     int ans = SysLogin(&t);
     if(ans == 1)
